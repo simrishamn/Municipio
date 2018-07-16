@@ -125,7 +125,8 @@ class Enqueue
                 'show'      => get_field('cookie_consent_active', 'option'),
                 'message'   => get_field('cookie_consent_message', 'option'),
                 'button'    => get_field('cookie_consent_button', 'option'),
-                'placement' => get_field('cookie_consent_placement', 'option')
+                'placement' => get_field('cookie_consent_placement', 'option'),
+                'infoUrl' => get_field('cookie_info_url', 'option')
             ),
             'googleTranslate' => array(
                 'gaTrack' => get_field('google_translate_ga_track', 'option'),

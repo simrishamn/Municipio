@@ -81,6 +81,28 @@ if (function_exists('acf_add_local_field_group')) {
             'disabled' => 0,
         ),
         3 => array(
+            'key' => 'field_5b4c5f429d83f',
+            'label' => 'Read More Page',
+            'name' => 'cookie_info_url',
+            'type' => 'page_link',
+            'instructions' => '',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '',
+                'class' => '',
+                'id' => '',
+            ),
+            'post_type' => array(
+                0 => 'page',
+            ),
+            'taxonomy' => array(
+            ),
+            'allow_null' => 0,
+            'allow_archives' => 1,
+            'multiple' => 0,
+        ),
+        4 => array(
             'layout' => 'vertical',
             'choices' => array(
                 'top' => __('At the top of the page', 'municipio'),
