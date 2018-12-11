@@ -10,7 +10,12 @@ class ColorScheme
     {
         add_filter('acf/update_value/name=color_scheme', function ($value, $post_id, $field) {
             if (in_array($post_id, array("option", "options"))) {
-                $this->getRemoteColorScheme($value);
+                // We shouldn't use http unless necessary
+                if(defined('LOCAL_STYLEGUIDE_DIR')) {
+                    $this->getLocalColorScheme($value);
+                } else {
+                    $this->getRemoteColorScheme($value);
+                }
             }
             return $value;
         }, 10, 3);
@@ -18,11 +23,11 @@ class ColorScheme
 
     /**
      * Get remote colorsheme from styleguide etc
-     * @param  string $manifestId. A identifier that represents the id of the theme configuration (filename on server)
+     * @param  string $manifestId. A identifier that represents the id
+     * of the theme configuration (filename on server)
      * @return bool
      */
-
-    public function getRemoteColorScheme($manifestId = "") : bool
+    public function getRemoteColorScheme($manifestId = '') : bool
     {
         if (!defined('MUNICIPIO_STYLEGUIDE_URI')) {
             return false;
@@ -32,20 +37,40 @@ class ColorScheme
             $manifestId = apply_filters('Municipio/theme/key', get_field('color_scheme', 'option'));
         }
 
-        //Get remote data
+        // Get remote data
         $request = wp_remote_get("https:" . MUNICIPIO_STYLEGUIDE_URI . "vars/" . $manifestId . '.json');
 
         //Store if valid response
         if (wp_remote_retrieve_response_code($request) == 200) {
             if (!empty($response = json_decode(wp_remote_retrieve_body($request)))) {
-                $this->storeColorScheme($response);
+                return $this->storeColorScheme($response);
             }
-
-            return true;
+            return false;
         }
-
         //Not updated
         return false;
+    }
+
+    /**
+     * Get local colorsheme from styleguide
+     * @param  string $manifestId. A identifier that represents the id
+     * of the theme configuration (filename on server)
+     * @return bool
+     */
+    public function getLocalColorScheme($manifestId = '') : bool
+    {
+        $manifest = json_decode(
+            file_get_contents(
+                LOCAL_STYLEGUIDE_DIR . '/dist/vars/' . $manifestId . '.json'
+            )
+        );
+
+        if($manifest) {
+            return $this->storeColorScheme($manifest);
+        } else {
+            error_log('Failed to retrieve local color scheme manifest');
+            return false;
+        }
     }
 
     /**
@@ -57,9 +82,9 @@ class ColorScheme
     public function storeColorScheme($colors) : bool
     {
         if (!is_array($colors) && !is_object($colors)) {
+            error_log('not array');
             $colors = array();
         }
-
         return update_option($this->optionName, (array) $this->sanitizeColorSheme($colors), false);
     }
 
