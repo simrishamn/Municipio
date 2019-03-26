@@ -28,6 +28,7 @@ build_script:
   - composer config version "$VERSION"
   - truncate -s 0 vendor/autoload.php
   - npx --no-install gulp build
+  - npx --no-install gulp build
 
 after_build:
   - zip -r "$ARTIFACT" . -x ".git*" -x "node_modules/*" -x "vendor/*/*"
