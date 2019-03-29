@@ -2,6 +2,7 @@
 
 namespace Municipio\Theme;
 
+use \Municipio\Helper\CacheBust;
 use \Municipio\Helper\Styleguide;
 
 class Enqueue
@@ -57,10 +58,12 @@ class Enqueue
      */
     public function adminStyle()
     {
-        wp_register_style('helsingborg-se-admin', get_template_directory_uri(). '/assets/dist/' . \Municipio\Helper\CacheBust::name('css/admin.min.css'));
+        $distUri = get_template_directory_uri() . '/assets/dist/';
+
+        wp_register_style('helsingborg-se-admin', $distUri . CacheBust::name('css/admin.css'));
         wp_enqueue_style('helsingborg-se-admin');
 
-        wp_register_script('helsingborg-se-admin', get_template_directory_uri() . '/assets/dist/' . \Municipio\Helper\CacheBust::name('js/admin.min.js'));
+        wp_register_script('helsingborg-se-admin', $distUri . CacheBust::name('js/admin.js'));
         wp_enqueue_script('helsingborg-se-admin');
     }
 
@@ -70,6 +73,8 @@ class Enqueue
      */
     public function style()
     {
+        $distUri = get_template_directory_uri(). '/assets/dist/';
+
         // Tell jquery dependents to wait for prime instead.
         if (!apply_filters('Municipio/load-wp-jquery', false)) {
             wp_deregister_script('jquery');
@@ -85,7 +90,7 @@ class Enqueue
             wp_enqueue_style($this->defaultPrimeName . '-bem');
         }
 
-        wp_register_style('municipio', get_template_directory_uri(). '/assets/dist/' . \Municipio\Helper\CacheBust::name('css/app.min.css'));
+        wp_register_style('municipio', $distUri . CacheBust::name('css/app.css'));
         wp_enqueue_style('municipio');
     }
 
@@ -95,6 +100,7 @@ class Enqueue
      */
     public function script()
     {
+        $distUri = get_template_directory_uri() . '/assets/dist/';
         wp_register_script($this->defaultPrimeName, Styleguide::getScriptPath());
 
         //Localization
@@ -126,7 +132,7 @@ class Enqueue
         ));
         wp_enqueue_script($this->defaultPrimeName);
 
-        wp_register_script('municipio', get_template_directory_uri() . '/assets/dist/' . \Municipio\Helper\CacheBust::name('js/app.js'));
+        wp_register_script('municipio', $distUri . CacheBust::name('js/app.js'));
         wp_localize_script('municipio', 'MunicipioLang', array(
             'printbreak' => array(
                 'tooltip' => __('Insert Print Page Break tag', 'municipio')
