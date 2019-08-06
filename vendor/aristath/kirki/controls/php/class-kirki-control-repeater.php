@@ -5,7 +5,7 @@
  * @package     Kirki
  * @subpackage  Controls
  * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license     http://opensource.org/licenses/https://opensource.org/licenses/MIT
+ * @license    https://opensource.org/licenses/MIT
  * @since       2.0
  */
 
@@ -50,6 +50,14 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 	 * @var array
 	 */
 	public $row_label = array();
+
+	/**
+	 * The button label
+	 *
+	 * @access public
+	 * @var string
+	 */
+	public $button_label = '';
 
 	/**
 	 * Constructor.
@@ -122,7 +130,7 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 						break;
 				}
 			}
-		} // End foreach().
+		}
 
 		$this->fields = $args['fields'];
 
@@ -170,8 +178,8 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 						}
 					}
 				}
-			} // End foreach().
-		} // End if().
+			}
+		}
 	}
 
 	/**
@@ -215,7 +223,6 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 		<ul class="repeater-fields"></ul>
 
 		<?php if ( isset( $this->choices['limit'] ) ) : ?>
-			<?php // @codingStandardsIgnoreLine ?>
 			<?php /* translators: %s represents the number of rows we're limiting the repeater to allow. */ ?>
 			<p class="limit"><?php printf( esc_attr__( 'Limit: %s rows', 'kirki' ), esc_html( $this->choices['limit'] ) ); ?></p>
 		<?php endif; ?>
@@ -247,7 +254,7 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 				<div class="repeater-row-content">
 					<# _.each( data, function( field, i ) { #>
 
-						<div class="repeater-field repeater-field-{{{ field.type }}}">
+						<div class="repeater-field repeater-field-{{{ field.type }}} repeater-field-{{ field.id }}">
 
 							<# if ( 'text' === field.type || 'url' === field.type || 'link' === field.type || 'email' === field.type || 'tel' === field.type || 'date' === field.type || 'number' === field.type ) { #>
 								<# var fieldExtras = ''; #>
@@ -299,7 +306,7 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 									<# if ( field.description ) { #><span class="description customize-control-description">{{{ field.description }}}</span><# } #>
 									<select data-field="{{{ field.id }}}"<# if ( ! _.isUndefined( field.multiple ) && false !== field.multiple ) { #> multiple="multiple" data-multiple="{{ field.multiple }}"<# } #>>
 										<# _.each( field.choices, function( choice, i ) { #>
-											<option value="{{{ i }}}" <# if ( field.default == i ) { #> selected="selected" <# } #>>{{ choice }}</option>
+											<option value="{{{ i }}}" <# if ( -1 !== jQuery.inArray( i, field.default ) || field.default == i ) { #> selected="selected" <# } #>>{{ choice }}</option>
 										<# }); #>
 									</select>
 								</label>
@@ -338,17 +345,20 @@ class Kirki_Control_Repeater extends Kirki_Control_Base {
 
 							<# } else if ( 'color' === field.type ) { #>
 
-								<# var defaultValue = '';
-								if ( field.default ) {
-									defaultValue = ( '#' !== field.default.substring( 0, 1 ) ) ? '#' + field.default : field.default;
-									defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
-								} #>
 								<label>
 									<# if ( field.label ) { #><span class="customize-control-title">{{{ field.label }}}</span><# } #>
 									<# if ( field.description ) { #><span class="description customize-control-description">{{{ field.description }}}</span><# } #>
-									<input class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'kirki' ); ?>"  value="{{{ field.default }}}" data-field="{{{ field.id }}}" {{ defaultValue }} />
-
 								</label>
+								<# var defaultValue = '';
+								if ( field.default ) {
+									if ( -1 === field.default.indexOf( 'rgba' ) ) {
+										defaultValue = ( '#' !== field.default.substring( 0, 1 ) ) ? '#' + field.default : field.default;
+										defaultValue = ' data-default-color=' + defaultValue; // Quotes added automatically.
+									} else {
+										defaultValue = ' data-default-color="' + defaultValue + '" data-alpha="true"';
+									}
+								} #>
+								<input class="color-picker-hex" type="text" maxlength="7" placeholder="<?php esc_attr_e( 'Hex Value', 'kirki' ); ?>"  value="{{{ field.default }}}" data-field="{{{ field.id }}}" {{ defaultValue }} />
 
 							<# } else if ( 'textarea' === field.type ) { #>
 

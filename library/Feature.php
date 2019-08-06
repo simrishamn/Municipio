@@ -6,17 +6,9 @@ class Feature
 {
     public function __construct()
     {
-        add_action('after_setup_theme', array($this, 'featureEnabler'), 5);
-    }
-
-    /**
-     * Filters to run (enables or disables features)
-     * @return void
-     */
-    public function featureEnabler() // : void
-    {
         //Enable customiser enabled views
         add_filter('Municipio/Controller/BaseController/Customizer', array($this, 'toogleFeatures'));
+        add_filter('Municipio/Feature/addCustomizerOption', array($this, 'toogleFeatures'));
 
         //Enable customizer widgets
         add_filter('Municipio/Widget/Widgets/CustomizerWidgets', array($this, 'toogleFeatures'));
@@ -25,10 +17,23 @@ class Feature
         add_filter('Municipio/Theme/Enqueue/Bem', array($this, 'toogleFeatures'));
 
         //Add bem-view path
-        add_filter('Municipio/blade/view_paths', array($this, 'addBemViewPath'));
+        add_filter('Municipio/blade/view_paths', array($this, 'addBemViewPath'), 2, 1);
+        add_filter('Municipio/Widget/Source/BaseWidget/viewPath', array($this, 'addBemViewPath'), 2, 1);
 
         //Enable template version 3 for modularity
         add_filter('Modularity/Module/TemplateVersion3', array($this, 'toogleFeatures'));
+
+        add_filter('acf/load_field/name=footer_layout', array($this, 'addCustomizerOption'));
+        add_filter('acf/load_field/name=header_layout', array($this, 'addCustomizerOption'));
+    }
+
+    public function addCustomizerOption($field)
+    {
+        if (apply_filters('Municipio/Feature/addCustomizerOption', false)) {
+            $field['choices']['customizer'] = 'Customizer';
+        }
+
+        return $field;
     }
 
     /**

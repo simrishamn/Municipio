@@ -19,7 +19,7 @@
             if (is_active_sidebar('right-sidebar') && get_field('archive_' . sanitize_title($postType) . '_show_sidebar_navigation', 'option')) {
                 $cols = 'grid-md-8 grid-lg-6';
             } elseif (is_active_sidebar('right-sidebar') || get_field('archive_' . sanitize_title($postType) . '_show_sidebar_navigation', 'option')) {
-                $cols = 'grid-md-12 grid-lg-9';
+                $cols = 'grid-md-8 grid-lg-9';
             }
         ?>
 
@@ -45,19 +45,24 @@
                             <h1>{{ the_archive_title() }}</h1>
                         @endif
                     @endif
-                    @include('partials.accessibility-menu')
+
+                    @if (!empty(apply_filters('accessibility_items', array())))
+                        <div class="u-mb-3">
+                            @include('partials.accessibility-menu')
+                        </div>
+                    @endif
                 </div>
             </div>
-            @else
+            @elseif (!empty(apply_filters('accessibility_items', array())))
                 <div class="grid">
-                    <div class="grid-xs-12">
+                    <div class="grid-xs-12 u-mb-3">
                         @include('partials.accessibility-menu')
                     </div>
                 </div>
             @endif
 
             @if (is_active_sidebar('content-area-top'))
-                <div class="grid sidebar-content-area sidebar-content-area-top">
+                <div class="grid grid--columns sidebar-content-area sidebar-content-area-top">
                     <?php dynamic_sidebar('content-area-top'); ?>
                 </div>
             @endif
@@ -70,7 +75,7 @@
                     @include('partials.archive-filters')
                 </div>
             @endif
-                <div class="grid" @if (in_array($template, array('cards'))) data-equal-container @endif>
+                <div class="grid grid--columns" @if (in_array($template, array('cards'))) data-equal-container @endif>
                     @if (have_posts())
                         <?php $postNum = 0; ?>
                         @while(have_posts())
@@ -96,13 +101,13 @@
             @endif
 
             @if (is_active_sidebar('content-area'))
-                <div class="grid sidebar-content-area sidebar-content-area-bottom">
+                <div class="grid grid--columns sidebar-content-area sidebar-content-area-bottom">
                     <?php dynamic_sidebar('content-area'); ?>
                 </div>
             @endif
 
             <div class="grid">
-                <div class="grid-sm-12 text-center">
+                <div class="grid-sm-12 text-center u-mb-7">
                     {!!
                         paginate_links(array(
                             'type' => 'list'

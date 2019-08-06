@@ -18,26 +18,42 @@ class Enqueue
         // Admin style
         add_action('admin_enqueue_scripts', array($this, 'adminStyle'), 999);
 
+        //Customizer Style
+        add_action('customize_controls_enqueue_scripts', array($this, 'customizerStyle'));
+
         add_action('wp_enqueue_scripts', array($this, 'googleTagManager'), 999);
         add_action('wp_enqueue_scripts', array($this, 'googleReCaptcha'), 999);
+        add_action('wp_footer', array($this, 'addGoogleTranslate'), 999);
 
         // Removes version querystring from scripts and styles
         add_filter('script_loader_src', array($this, 'removeScriptVersion'), 15, 1);
         add_filter('style_loader_src', array($this, 'removeScriptVersion'), 15, 1);
 
         // Removes generator tag
-        add_filter('the_generator', '__return_empty_string');
+        add_filter('the_generator', function($a, $b) {
+            return '';
+        }, 9, 2);
+
 
         //Move scripts to footer
         add_action('wp_print_scripts', array($this, 'moveScriptsToFooter'));
 
         //Enable defered loading
-        add_action('clean_url', array($this, 'deferedLoadingJavascript'));
+        add_filter('script_loader_tag', array($this, 'deferedLoadingJavascript'), 10, 2);
 
         // Plugin filters (script/style related)
         add_filter('gform_init_scripts_footer', '__return_true');
         add_filter('gform_cdata_open', array($this, 'wrapGformCdataOpen'));
         add_filter('gform_cdata_close', array($this, 'wrapGformCdataClose'));
+    }
+
+    public function customizerStyle()
+    {
+        $enqueueBem = apply_filters('Municipio/Theme/Enqueue/Bem', false);
+        if ($enqueueBem) {
+            wp_register_style('municipio-customizer', get_template_directory_uri(). '/assets/dist/' . \Municipio\Helper\CacheBust::name('css/customizer.css'), '', null);
+            wp_enqueue_style('municipio-customizer');
+        }
     }
 
     public function wrapGformCdataOpen($content)
@@ -58,13 +74,12 @@ class Enqueue
      */
     public function adminStyle()
     {
-        $distUri = get_template_directory_uri() . '/assets/dist/';
-
-        wp_register_style('helsingborg-se-admin', $distUri . CacheBust::name('css/admin.css'));
+        wp_register_style('helsingborg-se-admin', get_template_directory_uri(). '/assets/dist/' . \Municipio\Helper\CacheBust::name('css/admin.css'));
         wp_enqueue_style('helsingborg-se-admin');
 
-        wp_register_script('helsingborg-se-admin', $distUri . CacheBust::name('js/admin.js'));
+        wp_register_script('helsingborg-se-admin', get_template_directory_uri() . '/assets/dist/' . \Municipio\Helper\CacheBust::name('js/admin.js'));
         wp_enqueue_script('helsingborg-se-admin');
+
     }
 
     /**
@@ -90,7 +105,7 @@ class Enqueue
             wp_enqueue_style($this->defaultPrimeName . '-bem');
         }
 
-        wp_register_style('municipio', $distUri . CacheBust::name('css/app.css'));
+        wp_register_style('municipio', get_template_directory_uri(). '/assets/dist/' . \Municipio\Helper\CacheBust::name('css/app.css'));
         wp_enqueue_style('municipio');
     }
 
@@ -132,7 +147,8 @@ class Enqueue
         ));
         wp_enqueue_script($this->defaultPrimeName);
 
-        wp_register_script('municipio', $distUri . CacheBust::name('js/app.js'));
+        wp_register_script('municipio', get_template_directory_uri() . '/assets/dist/' . \Municipio\Helper\CacheBust::name('js/app.js'));
+        wp_register_script('municipio-ajax', get_template_directory_uri() . '/assets/dist/' . \Municipio\Helper\CacheBust::name('js/ajax.js'));
         wp_localize_script('municipio', 'MunicipioLang', array(
             'printbreak' => array(
                 'tooltip' => __('Insert Print Page Break tag', 'municipio')
@@ -142,10 +158,12 @@ class Enqueue
                 'onError' => __('Something went wrong, please try again later', 'municipio'),
             )
         ));
+
         wp_enqueue_script('municipio');
+        wp_enqueue_script('municipio-ajax');
 
         //Load polyfill SAAS
-        wp_enqueue_script('polyfill', 'https://cdn.polyfill.io/v2/polyfill.min.js', 'municipio');
+        wp_enqueue_script('polyfill', 'https://cdn.polyfill.io/v3/polyfill.min.js', 'municipio');
 
         //Comment reply
         if (is_singular() && get_option('thread_comments')) {
@@ -202,37 +220,68 @@ class Enqueue
         }, 999);
     }
 
+
+    public function addGoogleTranslate(){
+        echo "<script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'sv',
+                    autoDisplay: false,
+                    gaTrack: HbgPrimeArgs.googleTranslate.gaTrack,
+                    gaId: HbgPrimeArgs.googleTranslate.gaUA,
+                },
+                'google-translate-element'
+            );
+        }
+        </script>";
+    }
+
+
     /**
-     * Removes querystring from any scripts/styles loaded from "helsingborg" or "localhost"
+     * Removes querystring from any scripts/styles internally
      * @param  string $src The soruce path
      * @return string      The source path without any querystring
      */
     public function removeScriptVersion($src)
     {
-        $parts = explode('?', $src);
-        if (strpos($parts[0], 'helsingborg') > -1 || strpos($parts[0], 'localhost') > -1) {
-            return $parts[0];
+        $siteUrlComponents = parse_url(get_site_url());
+        $urlComponents = parse_url($src);
+        // Check if the URL is internal or external
+        if (!empty($siteUrlComponents['host'])
+            && !empty($urlComponents['host'])
+            && strcasecmp($urlComponents['host'], $siteUrlComponents['host']) === 0
+            && !is_admin_bar_showing()) {
+            $src = !empty($urlComponents['query']) ? str_replace('?' . $urlComponents['query'], '', $src) : $src;
+            return $src;
         } else {
             return $src;
         }
     }
 
     /**
-     * Making deffered loading of scripts a posibillity (remnoves unwanted renderblocking js)
-     * @param  string $src The soruce path
-     * @return string      The source path without any querystring
+     * Making deffered loading of scripts a posibillity (removes unwanted renderblocking js)
+     * @param  string $tag    HTML Script tag
+     * @param  string $handle Script handle
+     * @return string         The script tag
      */
-    public function deferedLoadingJavascript($url)
+    public function deferedLoadingJavascript($tag, $handle)
     {
-        if (is_admin() || false !== strpos($url, 'readspeaker.com') || false === strpos($url, '.js')) {
-            return $url;
+        if (is_admin()) {
+            return $tag;
         }
 
-        if (isset($_GET['gf_page']) && $_GET['gf_page'] == 'preview') {
-            return $url;
+        if (isset($_GET['preview']) && $_GET['preview'] == 'true') {
+            return $tag;
         }
 
-        return $url . "' defer='defer";
+        $scriptsHandlesToIgnore = apply_filters('Municipio/Theme/Enqueue/deferedLoadingJavascript/handlesToIgnore', array('readspeaker'), $handle);
+
+        if (in_array($handle, $scriptsHandlesToIgnore)) {
+            return $tag;
+        }
+
+       return str_replace(' src', ' defer="defer" src', $tag);
     }
 
     /**

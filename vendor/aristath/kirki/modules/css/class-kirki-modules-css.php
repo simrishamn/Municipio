@@ -6,7 +6,7 @@
  * @category    Modules
  * @author      Aristeides Stathopoulos
  * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license     http://opensource.org/licenses/https://opensource.org/licenses/MIT
+ * @license    https://opensource.org/licenses/MIT
  * @since       3.0.0
  */
 
@@ -57,6 +57,16 @@ class Kirki_Modules_CSS {
 	 * @var object
 	 */
 	protected $css_to_file;
+
+	/**
+	 * Should we enqueue font-awesome?
+	 *
+	 * @static
+	 * @access protected
+	 * @since 3.0.26
+	 * @var bool
+	 */
+	protected static $enqueue_fa = false;
 
 	/**
 	 * Constructor
@@ -203,7 +213,8 @@ class Kirki_Modules_CSS {
 			}
 			$this->processed = true;
 		}
-		if ( apply_filters( 'kirki_load_fontawesome', true ) ) {
+
+		if ( self::$enqueue_fa && apply_filters( 'kirki_load_fontawesome', true ) ) {
 			wp_enqueue_script( 'kirki-fontawesome-font', 'https://use.fontawesome.com/30858dc40a.js', array(), '4.0.7', true );
 		}
 	}
@@ -291,5 +302,18 @@ class Kirki_Modules_CSS {
 		if ( is_array( $css ) ) {
 			return Kirki_Modules_CSS_Generator::styles_parse( Kirki_Modules_CSS_Generator::add_prefixes( $css ) );
 		}
+	}
+
+	/**
+	 * Runs when we're adding a font-awesome field to allow enqueueing the
+	 * fontawesome script on the frontend.
+	 *
+	 * @static
+	 * @since 3.0.26
+	 * @access public
+	 * @return void
+	 */
+	public static function add_fontawesome_script() {
+		self::$enqueue_fa = true;
 	}
 }

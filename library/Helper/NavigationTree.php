@@ -24,6 +24,8 @@ class NavigationTree
 
     protected $isAjaxParent = false;
 
+    private $frontPageIdCache = null; 
+
     public function __construct($args = array(), $parent = false)
     {
         if ($parent) {
@@ -253,6 +255,14 @@ class NavigationTree
             $attributes['class'][] = 'has-sub-menu';
         }
 
+        if(is_null($this->frontPageIdCache)) {
+            $this->frontPageIdCache = get_option('page_on_front'); 
+        }
+
+        if($pageId == $this->frontPageIdCache) {
+            $attributes['class'][] = 'is-front-page';
+        }
+
         if ($output) {
             $this->startItem($page, $attributes, $hasChildren);
         }
@@ -476,15 +486,23 @@ class NavigationTree
             $href = $item->url;
         }
 
-        $this->addOutput(sprintf(
-            '<li%1$s><a href="%2$s">%3$s</a>',
-            $this->attributes($attributes),
-            $href,
-            $title
-        ));
+
 
         if ($outputSubmenuToggle) {
-            $this->addOutput('<button data-load-submenu="' . $objId . '"><span class="sr-only">' . __('Show submenu', 'municipio') . '</span><span class="icon"></span></button>');
+            $this->addOutput(sprintf(
+                '<li%1$s><a href="%2$s">%3$s</a>',
+                $this->attributes($attributes),
+                $href,
+                $title
+            ));
+            $this->addOutput('<button data-load-submenu="' . $objId . '" data-load-blog-id="' . get_current_blog_id() . '"><span class="sr-only">' . __('Show submenu', 'municipio') . '</span><span class="icon"></span></button>');
+        } else {
+            $this->addOutput(sprintf(
+                '<li%1$s><a href="%2$s">%3$s</a>',
+                $this->attributes($attributes),
+                $href,
+                $title
+            ));
         }
     }
 

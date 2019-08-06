@@ -16,12 +16,22 @@ Municipio requires [ACF PRO](https://www.advancedcustomfields.com/pro/).
 For PHP, use PSR-2 and PSR-4 where applicable.
 
 ## Gulp
-We use Gulp to compile, concatenate and minify SASS and JavaScript.
+You can use Gulp to compile, concatenate and minify SASS and JavaScript.
 The compiling of SASS will also automatically add vendor-prefixes where needed.
 
 To compile both js and sass and start the "watch" task run the following command from the theme directory:
 ```
 $ gulp
+```
+
+## We added support for webpack
+Webpack is a bit faster than gulp. So if you prefer to use webpack instead of gulp, just run the following command:
+```
+$ npm run watch
+```
+or just for a single build:
+```
+$ npm run build
 ```
 
 ## Constants
@@ -82,6 +92,18 @@ Do action on sharing post by email, e.g. send a notification
 
 ```php
 do_action('Municipio/share_post/recipients', $user, $recipients);
+```
+
+#### Municipio/comment/save_like
+
+Do action on comment like
+
+- ```@param object $comment``` - Comment object
+- ```@param int $userId``` - Current user ID
+- ```@param bool $create``` - True if a new like is created. False if it's removed
+
+```php
+do_action('Municipio/comment/save_like', $comment, $userId, $create);
 ```
 
 ## Filters
@@ -343,3 +365,73 @@ Municipio is integrated with google web-fonts. It enables smart loading of fonts
 define('WEB_FONT', 'Roboto'); //The google fonts name (without weights)
 define('WEB_FONT_REMOTE', true); //Load font kit from cdn
 ```
+# Version 2.0
+The goal of version 2.0 is to restructure the theme frontend and move towards the BEM (IT) standard for markup. More filters will be added in a automatic manner, mutch like ACF doe's it. These will for now, be documented below. 
+
+## Deprecated functionality (notice phase)
+Version 2.0 will introduce some warnings aboute the removal of some prevoius functionality. According to plan, this functionality will be actually be removed in version 3.0. Functions that will be removed in 3.0 are. 
+
+- Gravitiforms optimizations 
+- Honeypot functionality for comments (this will be moved to separate plugin). Will also include google recaptcha.
+- Contact widget (replacement avabile in modularity)
+- RichText Widget (replacement embedded in core)
+- PostType & Taxonomy creator (move to plugin)
+- Upload filters (move to plugin)
+
+## Filters
+
+### Depricated filters
+- HbgBlade/data replaced with Municipio/viewData
+- Municipio/ajax_url_in_head replaced with Municipio/ajaxUrl
+- Modularity/CoreTemplatesSearchPaths
+
+### Blade view filter
+All variables sent (created) in a controller will automatically go trough a filter named with the variable key. 
+
+```php
+apply_filters('Municipio/{{KEY}}', $var);
+```
+
+## Global view filter
+You may prefer to get a full array of everything sent to a view. After the filter above has run, a global filter will be applied. This replaces the old  filter. 
+
+```php
+apply_filters('Municipio/viewData', $var);
+```
+## Constants 
+MUNICIPIO_FRAGMENT_CACHE - Set to false to remove fragment cache. 
+
+## Theme view structure
+
+```
+bem-views 
+│   [Main folder for  theme views, containing WordPress templates like page.blade.php] 
+│
+└───components
+│   │   [Components for the theme like card.blade.php]
+│   │
+└───partials
+│   │   [Big chunks that are reused in templates footer.blade.php]
+│   │
+└───templates
+    │   [General templates that are included in main WordPress views like master.blade.php]
+│   │
+└───utilities
+    │   [Small pieces used by components like button.blade.php]
+│   │
+└───widgets
+    │   [Widgetized components]
+    │
+
+```
+
+
+## Image compression
+Municipio supports image compression with shortpixel. This will enque a cronjob with a slight delay to compress newly uploaded images. Simpley define SHORTPIXEL_API_KEY constant in your config file and that's it! 
+
+Compression level will be medium/glossy for high quality photos. 
+
+## Tested with support from BrowserStack
+This software is tested with the awesome tools from Browserstack.
+
+<a href="https://browserstack.com"><img src="https://utveckling.helsingborg.se/wp-content/uploads/sites/19/2018/09/browserstack-logo.png"/></a>

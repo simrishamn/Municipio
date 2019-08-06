@@ -1,6 +1,6 @@
 {
   "name": "kirki-toolkit",
-  "version": "3.0.21",
+  "version": "3.0.27",
   "author": "Aristeides Stathopoulos",
   "homepage": "https://kirki.org",
   "license": "MIT",
@@ -21,7 +21,7 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
-    "grunt": "*",
+    "grunt": "^1.0.3",
     "grunt-contrib-clean": "*",
     "grunt-contrib-concat": "*",
     "grunt-contrib-sass": "*",

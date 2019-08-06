@@ -13,11 +13,16 @@ class Search extends \Municipio\Controller\BaseController
             'all_pages' => __("All pages", 'municipio'),
         );
 
+        // Custom null result message
+        $this->data['emptySearchResultMessage'] = get_field('empty_search_result_message', 'option');
+
         //Determine what type of searchengine that should be used
         if (get_field('use_google_search', 'option') === true) {
             $this->googleSearch();
             $this->data['activeSearchEngine'] = "google";
         } elseif (get_field('use_algolia_search', 'option') === true) {
+            $displayPostTypes = get_field('algolia_display_post_types', 'option');
+            $this->data['displayPostTypes'] = is_array($displayPostTypes) && !empty(array_filter($displayPostTypes)) ? json_encode($displayPostTypes) : json_encode(array());
             if(function_exists('queryAlgoliaSearch')) {
                 $this->algoliaCustomSearch();
                 $this->data['activeSearchEngine'] = "algoliacustom";

@@ -36,6 +36,14 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 				public $type = 'kirki_installer';
 
 				/**
+				 * The plugin install URL.
+				 *
+				 * @access private
+				 * @var string
+				 */
+				public $plugin_install_url;
+
+				/**
 				 * Render the section.
 				 *
 				 * @access protected
@@ -55,16 +63,8 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 							$installed = true;
 						}
 					}
-					// Get the plugin-installation URL.
-					$plugin_install_url = add_query_arg(
-						array(
-							'action' => 'install-plugin',
-							'plugin' => 'kirki',
-						),
-						self_admin_url( 'update.php' )
-					);
-					$plugin_install_url = wp_nonce_url( $plugin_install_url, 'install-plugin_kirki' );
-					$classes = 'cannot-expand accordion-section control-section control-section-themes control-section-' . $this->type;
+					$plugin_install_url = $this->get_plugin_install_url();
+					$classes            = 'cannot-expand accordion-section control-section control-section-themes control-section-' . $this->type;
 					?>
 					<li id="accordion-section-<?php echo esc_attr( $this->id ); ?>" class="<?php echo esc_attr( $classes ); ?>" style="border-top:none;border-bottom:1px solid #ddd;padding:7px 14px 16px 14px;text-align:right;">
 						<?php if ( ! $installed ) : ?>
@@ -88,7 +88,6 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 				public static function is_dismissed() {
 					// Get the user-meta.
 					$user_id   = get_current_user_id();
-					// @codingStandardsIgnoreLine WordPress.VIP.RestrictedFunctions.user_meta_get_user_meta)
 					$user_meta = get_user_meta( $user_id, 'dismiss-kirki-recommendation', true );
 
 					return ( true === $user_meta || '1' === $user_meta || 1 === $user_meta );
@@ -105,7 +104,7 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 					<p style="text-align:left;margin-top:0;">
 						<?php esc_attr_e( 'Please install the Kirki plugin to take full advantage of this theme\s customizer capabilities', 'textdomain' ); ?>
 					</p>
-					<a class="install-now button-primary button" data-slug="kirki" href="<?php echo esc_url_raw( $plugin_install_url ); ?>" aria-label="<?php esc_attr_e( 'Install Kirki Toolkit now', 'textdomain' ); ?>" data-name="Kirki Toolkit">
+					<a class="install-now button-primary button" data-slug="kirki" href="<?php echo esc_url_raw( $this->get_plugin_install_url() ); ?>" aria-label="<?php esc_attr_e( 'Install Kirki Toolkit now', 'textdomain' ); ?>" data-name="Kirki Toolkit">
 						<?php esc_html_e( 'Install Now', 'textdomain' ); ?>
 					</a>
 					<?php
@@ -153,7 +152,7 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 							event.preventDefault();
 
 							<?php if ( $show_confirm ) : ?>
-								if ( ! confirm( '<?php esc_attr_e( 'Are you sure? Dismissing this message will hide the installation recommendation and you will have to manually install and activate the plugin in the future.' ); ?>' ) ) {
+								if ( ! confirm( '<?php esc_attr_e( 'Are you sure? Dismissing this message will hide the installation recommendation and you will have to manually install and activate the plugin in the future.', 'textdomain' ); ?>' ) ) {
 									return;
 								}
 							<?php endif; ?>
@@ -168,6 +167,27 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 					} );
 					</script>
 					<?php
+				}
+
+				/**
+				 * Get the plugin install URL.
+				 *
+				 * @access private
+				 * @return string
+				 */
+				private function get_plugin_install_url() {
+					if ( ! $this->plugin_install_url ) {
+						// Get the plugin-installation URL.
+						$this->plugin_install_url = add_query_arg(
+							array(
+								'action' => 'install-plugin',
+								'plugin' => 'kirki',
+							),
+							self_admin_url( 'update.php' )
+						);
+						$this->plugin_install_url = wp_nonce_url( $this->plugin_install_url, 'install-plugin_kirki' );
+					}
+					return $this->plugin_install_url;
 				}
 			}
 		}
@@ -193,8 +213,8 @@ if ( ! function_exists( 'kirki_installer_register' ) ) {
 		);
 		$wp_customize->add_control(
 			'kirki_installer_control', array(
-				'section'    => 'kirki_installer',
-				'settings'   => 'kirki_installer_setting',
+				'section'  => 'kirki_installer',
+				'settings' => 'kirki_installer_setting',
 			)
 		);
 
@@ -212,8 +232,7 @@ if ( ! function_exists( 'kirki_installer_dismiss' ) ) {
 	 */
 	function kirki_installer_dismiss() {
 		check_ajax_referer( 'dismiss-kirki-recommendation', 'security' );
-		$user_id   = get_current_user_id();
-		// @codingStandardsIgnoreLine WordPress.VIP.RestrictedFunctions.user_meta_update_user_meta
+		$user_id = get_current_user_id();
 		if ( update_user_meta( $user_id, 'dismiss-kirki-recommendation', true ) ) {
 			echo 'success! :-)';
 			wp_die();

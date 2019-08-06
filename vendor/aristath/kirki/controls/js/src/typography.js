@@ -1,48 +1,49 @@
 /* global kirkiL10n, kirki */
-wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicControl.extend({
+wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicControl.extend( {
 
 	initKirkiControl: function() {
 
 		'use strict';
 
 		var control = this,
-		    value   = control.setting._value,
-		    picker;
+			value   = control.setting._value,
+			picker;
 
 		control.renderFontSelector();
 		control.renderBackupFontSelector();
 		control.renderVariantSelector();
+		control.localFontsCheckbox();
 
 		// Font-size.
-		if ( control.params['default']['font-size'] ) {
+		if ( 'undefined' !== typeof control.params.default['font-size'] ) {
 			this.container.on( 'change keyup paste', '.font-size input', function() {
 				control.saveValue( 'font-size', jQuery( this ).val() );
 			} );
 		}
 
 		// Line-height.
-		if ( control.params['default']['line-height'] ) {
+		if ( 'undefined' !== typeof control.params.default['line-height'] ) {
 			this.container.on( 'change keyup paste', '.line-height input', function() {
 				control.saveValue( 'line-height', jQuery( this ).val() );
 			} );
 		}
 
 		// Margin-top.
-		if ( control.params['default']['margin-top'] ) {
+		if ( 'undefined' !== typeof control.params.default['margin-top'] ) {
 			this.container.on( 'change keyup paste', '.margin-top input', function() {
 				control.saveValue( 'margin-top', jQuery( this ).val() );
 			} );
 		}
 
 		// Margin-bottom.
-		if ( control.params['default']['margin-bottom'] ) {
+		if ( 'undefined' !== typeof control.params.default['margin-bottom'] ) {
 			this.container.on( 'change keyup paste', '.margin-bottom input', function() {
 				control.saveValue( 'margin-bottom', jQuery( this ).val() );
 			} );
 		}
 
 		// Letter-spacing.
-		if ( control.params['default']['letter-spacing'] ) {
+		if ( 'undefined' !== typeof control.params.default['letter-spacing'] ) {
 			value['letter-spacing'] = ( jQuery.isNumeric( value['letter-spacing'] ) ) ? value['letter-spacing'] + 'px' : value['letter-spacing'];
 			this.container.on( 'change keyup paste', '.letter-spacing input', function() {
 				value['letter-spacing'] = ( jQuery.isNumeric( jQuery( this ).val() ) ) ? jQuery( this ).val() + 'px' : jQuery( this ).val();
@@ -51,37 +52,37 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 		}
 
 		// Word-spacing.
-		if ( control.params['default']['word-spacing'] ) {
+		if ( 'undefined' !== typeof control.params.default['word-spacing'] ) {
 			this.container.on( 'change keyup paste', '.word-spacing input', function() {
 				control.saveValue( 'word-spacing', jQuery( this ).val() );
 			} );
 		}
 
 		// Text-align.
-		if ( control.params['default']['text-align'] ) {
+		if ( 'undefined' !== typeof control.params.default['text-align'] ) {
 			this.container.on( 'change', '.text-align input', function() {
 				control.saveValue( 'text-align', jQuery( this ).val() );
 			} );
 		}
 
 		// Text-transform.
-		if ( control.params['default']['text-transform'] ) {
+		if ( 'undefined' !== typeof control.params.default['text-transform'] ) {
 			jQuery( control.selector + ' .text-transform select' ).selectWoo().on( 'change', function() {
 				control.saveValue( 'text-transform', jQuery( this ).val() );
 			} );
 		}
 
 		// Text-decoration.
-		if ( control.params['default']['text-decoration'] ) {
+		if ( 'undefined' !== typeof control.params.default['text-decoration'] ) {
 			jQuery( control.selector + ' .text-decoration select' ).selectWoo().on( 'change', function() {
 				control.saveValue( 'text-decoration', jQuery( this ).val() );
 			} );
 		}
 
 		// Color.
-		if ( control.params['default'].color ) {
+		if ( 'undefined' !== typeof control.params.default.color ) {
 			picker = this.container.find( '.kirki-color-control' );
-			picker.wpColorPicker({
+			picker.wpColorPicker( {
 				change: function() {
 					setTimeout( function() {
 						control.saveValue( 'color', picker.val() );
@@ -98,18 +99,19 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 	renderFontSelector: function() {
 
 		var control         = this,
-		    selector        = control.selector + ' .font-family select',
-		    data            = [],
-		    standardFonts   = [],
-		    googleFonts     = [],
-		    value           = control.setting._value,
-		    fonts           = control.getFonts(),
-		    fontSelect;
+			selector        = control.selector + ' .font-family select',
+			data            = [],
+			standardFonts   = [],
+			googleFonts     = [],
+			value           = control.setting._value,
+			fonts           = control.getFonts(),
+			fontSelect,
+			controlFontFamilies;
 
 		// Format standard fonts as an array.
 		if ( ! _.isUndefined( fonts.standard ) ) {
 			_.each( fonts.standard, function( font ) {
-				standardFonts.push({
+				standardFonts.push( {
 					id: font.family.replace( /&quot;/g, '&#39' ),
 					text: font.label
 				} );
@@ -119,28 +121,55 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 		// Format google fonts as an array.
 		if ( ! _.isUndefined( fonts.google ) ) {
 			_.each( fonts.google, function( font ) {
-				googleFonts.push({
+				googleFonts.push( {
 					id: font.family,
 					text: font.family
 				} );
 			} );
 		}
 
+		// Do we have custom fonts?
+		controlFontFamilies = {};
+		if ( ! _.isUndefined( control.params ) && ! _.isUndefined( control.params.choices ) && ! _.isUndefined( control.params.choices.fonts ) && ! _.isUndefined( control.params.choices.fonts.families ) ) {
+			controlFontFamilies = control.params.choices.fonts.families;
+		}
+
 		// Combine forces and build the final data.
-		data = [
-			{ text: kirkiL10n.defaultCSSValues, children: [{ id: 'inherit', text: 'inherit' }] },
-			{ text: kirkiL10n.standardFonts, children: standardFonts },
-			{ text: kirkiL10n.googleFonts, children: googleFonts }
-		];
+		data = jQuery.extend( {}, controlFontFamilies, {
+			default: {
+				text: kirkiL10n.defaultCSSValues,
+				children: [
+					{ id: '', text: kirkiL10n.defaultBrowserFamily },
+					{ id: 'initial', text: 'initial' },
+					{ id: 'inherit', text: 'inherit' }
+				]
+			},
+			standard: {
+				text: kirkiL10n.standardFonts,
+				children: standardFonts
+			},
+			google: {
+				text: kirkiL10n.googleFonts,
+				children: googleFonts
+			}
+		} );
+
+		if ( kirkiL10n.isScriptDebug ) {
+			console.info( 'Kirki Debug: Font families for control "' + control.id + '":' );
+			console.info( data );
+		}
+
+		data = _.values( data );
 
 		// Instantiate selectWoo with the data.
-		fontSelect = jQuery( selector ).selectWoo({
+		fontSelect = jQuery( selector ).selectWoo( {
 			data: data
 		} );
 
 		// Set the initial value.
-		if ( value['font-family'] ) {
-			fontSelect.val( value['font-family'].replace( /'/g, '"' ) ).trigger( 'change' );
+		if ( value['font-family'] || '' === value['font-family'] ) {
+			value['font-family'] = kirki.util.parseHtmlEntities( value['font-family'].replace( /'/g, '"' ) );
+			fontSelect.val( value['font-family'] ).trigger( 'change' );
 		}
 
 		// When the value changes
@@ -164,19 +193,19 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 	renderBackupFontSelector: function() {
 
 		var control       = this,
-		    selector      = control.selector + ' .font-backup select',
-		    standardFonts = [],
-		    value         = control.setting._value,
-		    fontFamily    = value['font-family'],
-		    fonts         = control.getFonts(),
-		    fontSelect;
+			selector      = control.selector + ' .font-backup select',
+			standardFonts = [],
+			value         = control.setting._value,
+			fontFamily    = value['font-family'],
+			fonts         = control.getFonts(),
+			fontSelect;
 
 		if ( _.isUndefined( value['font-backup'] ) || null === value['font-backup'] ) {
 			value['font-backup'] = '';
 		}
 
 		// Hide if we're not on a google-font.
-		if ( 'inherit' === fontFamily || 'google' !== kirki.util.webfonts.getFontType( fontFamily ) ) {
+		if ( 'inherit' === fontFamily || 'initial' === fontFamily || 'google' !== kirki.util.webfonts.getFontType( fontFamily ) ) {
 			jQuery( control.selector + ' .font-backup' ).hide();
 			return;
 		}
@@ -185,7 +214,7 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 		// Format standard fonts as an array.
 		if ( ! _.isUndefined( fonts.standard ) ) {
 			_.each( fonts.standard, function( font ) {
-				standardFonts.push({
+				standardFonts.push( {
 					id: font.family.replace( /&quot;/g, '&#39' ),
 					text: font.label
 				} );
@@ -193,7 +222,7 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 		}
 
 		// Instantiate selectWoo with the data.
-		fontSelect = jQuery( selector ).selectWoo({
+		fontSelect = jQuery( selector ).selectWoo( {
 			data: standardFonts
 		} );
 
@@ -217,24 +246,37 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 	renderVariantSelector: function() {
 
 		var control    = this,
-		    value      = control.setting._value,
-		    fontFamily = value['font-family'],
-		    selector   = control.selector + ' .variant select',
-		    data       = [],
-		    isValid    = false,
-		    fontType   = kirki.util.webfonts.getFontType( fontFamily ),
-		    variants   = ['regular', 'italic', '700', '700italic'],
-		    fontWeight,
-		    variantSelector,
-		    fontStyle;
+			value      = control.setting._value,
+			fontFamily = value['font-family'],
+			selector   = control.selector + ' .variant select',
+			data       = [],
+			isValid    = false,
+			fontType   = kirki.util.webfonts.getFontType( fontFamily ),
+			variants   = [ '', 'regular', 'italic', '700', '700italic' ],
+			fontWeight,
+			variantSelector,
+			fontStyle;
 
 		if ( 'google' === fontType ) {
 			variants = kirki.util.webfonts.google.getVariants( fontFamily );
 		}
 
-		if ( 'inherit' === fontFamily ) {
+		// Check if we've got custom variants defined for this font.
+		if ( ! _.isUndefined( control.params ) && ! _.isUndefined( control.params.choices ) && ! _.isUndefined( control.params.choices.fonts ) && ! _.isUndefined( control.params.choices.fonts.variants ) ) {
+
+			// Check if we have variants for this font-family.
+			if ( ! _.isUndefined( control.params.choices.fonts.variants[ fontFamily ] ) ) {
+				variants = control.params.choices.fonts.variants[ fontFamily ];
+			}
+		}
+		if ( kirkiL10n.isScriptDebug ) {
+			console.info( 'Kirki Debug: Font variants for font-family "' + fontFamily + '":' );
+			console.info( variants );
+		}
+
+		if ( 'inherit' === fontFamily || 'initial' === fontFamily || '' === fontFamily ) {
 			value.variant = 'inherit';
-			variants      = [''];
+			variants      = [ '' ];
 			jQuery( control.selector + ' .variant' ).hide();
 		}
 
@@ -245,7 +287,7 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 
 			control.saveValue( 'variant', value.variant );
 
-			if ( '' === value.variant ) {
+			if ( '' === value.variant || ! value.variant ) {
 				fontWeight = '';
 				fontStyle  = '';
 			} else {
@@ -267,7 +309,7 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 			if ( value.variant === variant ) {
 				isValid = true;
 			}
-			data.push({
+			data.push( {
 				id: variant,
 				text: variant
 			} );
@@ -282,12 +324,15 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 		}
 
 		// Instantiate selectWoo with the data.
-		variantSelector = jQuery( selector ).selectWoo({
+		variantSelector = jQuery( selector ).selectWoo( {
 			data: data
 		} );
 		variantSelector.val( value.variant ).trigger( 'change' );
 		variantSelector.on( 'change', function() {
 			control.saveValue( 'variant', jQuery( this ).val() );
+			if ( 'string' !== typeof value.variant ) {
+				value.variant = variants[0];
+			}
 
 			fontWeight = ( ! _.isString( value.variant ) ) ? '400' : value.variant.match( /\d/g );
 			fontWeight = ( ! _.isObject( fontWeight ) ) ? '400' : fontWeight.join( '' );
@@ -303,11 +348,11 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 	 */
 	getFonts: function() {
 		var control            = this,
-		    initialGoogleFonts = kirki.util.webfonts.google.getFonts(),
-		    googleFonts        = {},
-		    googleFontsSort    = 'alpha',
+			initialGoogleFonts = kirki.util.webfonts.google.getFonts(),
+			googleFonts        = {},
+			googleFontsSort    = 'alpha',
 			googleFontsNumber  = 0,
-		    standardFonts      = {};
+			standardFonts      = {};
 
 		// Get google fonts.
 		if ( ! _.isEmpty( control.params.choices.fonts.google ) ) {
@@ -365,14 +410,30 @@ wp.customize.controlConstructor['kirki-typography'] = wp.customize.kirkiDynamicC
 		};
 	},
 
+	localFontsCheckbox: function() {
+		var control           = this,
+			checkboxContainer = control.container.find( '.kirki-host-font-locally' ),
+			checkbox          = control.container.find( '.kirki-host-font-locally input' ),
+			checked           = jQuery( checkbox ).is( ':checked' );
+
+		if ( control.setting._value && control.setting._value.downloadFont ) {
+			jQuery( checkbox ).attr( 'checked', 'checked' );
+		}
+
+		jQuery( checkbox ).on( 'change', function() {
+			checked = jQuery( checkbox ).is( ':checked' );
+			control.saveValue( 'downloadFont', checked );
+		} );
+	},
+
 	/**
 	 * Saves the value.
 	 */
 	saveValue: function( property, value ) {
 
 		var control = this,
-		    input   = control.container.find( '.typography-hidden-value' ),
-		    val     = control.setting._value;
+			input   = control.container.find( '.typography-hidden-value' ),
+			val     = control.setting._value;
 
 		val[ property ] = value;
 

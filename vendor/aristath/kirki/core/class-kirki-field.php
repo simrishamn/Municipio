@@ -6,7 +6,7 @@
  * @category    Core
  * @author      Aristeides Stathopoulos
  * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license     http://opensource.org/licenses/https://opensource.org/licenses/MIT
+ * @license    https://opensource.org/licenses/MIT
  * @since       1.0
  */
 
@@ -58,6 +58,22 @@ class Kirki_Field {
 	 * @var array
 	 */
 	protected $input_attrs = array();
+
+	/**
+	 * Preset choices.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $preset = array();
+
+	/**
+	 * CSS Variables.
+	 *
+	 * @access protected
+	 * @var array
+	 */
+	protected $css_vars = array();
 
 	/**
 	 * Use "theme_mod" or "option".
@@ -456,9 +472,18 @@ class Kirki_Field {
 	 */
 	protected function set_active_callback() {
 
-		if ( is_array( $this->active_callback ) && ! is_callable( $this->active_callback ) ) {
-			if ( isset( $this->active_callback[0] ) ) {
-				$this->required = $this->active_callback;
+		if ( is_array( $this->active_callback ) ) {
+			if ( ! is_callable( $this->active_callback ) ) {
+
+				// Bugfix for https://github.com/aristath/kirki/issues/1961.
+				foreach ( $this->active_callback as $key => $val ) {
+					if ( is_callable( $val ) ) {
+						unset( $this->active_callback[ $key ] );
+					}
+				}
+				if ( isset( $this->active_callback[0] ) ) {
+					$this->required = $this->active_callback;
+				}
 			}
 		}
 
@@ -681,5 +706,24 @@ class Kirki_Field {
 	protected function set_priority() {
 
 		$this->priority = absint( $this->priority );
+	}
+
+	/**
+	 * Sets the $css_vars
+	 *
+	 * @access protected
+	 */
+	protected function set_css_vars() {
+		if ( is_string( $this->css_vars ) ) {
+			$this->css_vars = array( $this->css_vars );
+		}
+		if ( isset( $this->css_vars[0] ) && is_string( $this->css_vars[0] ) ) {
+			$this->css_vars = array( $this->css_vars );
+		}
+		foreach ( $this->css_vars as $key => $val ) {
+			if ( ! isset( $val[1] ) ) {
+				$this->css_vars[ $key ][1] = '$';
+			}
+		}
 	}
 }

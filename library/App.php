@@ -40,7 +40,6 @@ class App
         new \Municipio\Theme\Blog();
         new \Municipio\Theme\FileUploads();
         new \Municipio\Theme\Archive();
-        new \Municipio\Theme\EventArchive();
         new \Municipio\Theme\CustomTemplates();
         new \Municipio\Theme\Font();
         new \Municipio\Theme\ColorScheme();
@@ -49,12 +48,6 @@ class App
 
         new \Municipio\Search\General();
         new \Municipio\Search\Algolia();
-
-        /**
-         * Customizer
-         */
-
-        new \Municipio\Customizer\Customizer();
 
         /**
          * Customizer
@@ -74,8 +67,6 @@ class App
         /**
          * Widget
          */
-        new \Municipio\Widget\RichEditor();
-        new \Municipio\Widget\Contact();
         new \Municipio\Widget\Widgets();
 
         /**
@@ -85,10 +76,6 @@ class App
         new \Municipio\Comment\LikeButton();
         new \Municipio\Comment\CommentsFilters();
         new \Municipio\Comment\CommentsActions();
-
-        add_action('widgets_init', function () {
-            register_widget('\Municipio\Widget\Contact');
-        });
 
         /**
          * Admin

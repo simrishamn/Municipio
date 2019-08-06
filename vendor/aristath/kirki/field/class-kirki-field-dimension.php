@@ -5,7 +5,7 @@
  * @package     Kirki
  * @subpackage  Controls
  * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license     http://opensource.org/licenses/https://opensource.org/licenses/MIT
+ * @license    https://opensource.org/licenses/MIT
  * @since       2.3.2
  */
 
@@ -33,6 +33,6 @@ class Kirki_Field_Dimension extends Kirki_Field {
 	 * @return string
 	 */
 	public function sanitize( $value ) {
-		return Kirki_Sanitize_Values::css_dimension( $value );
+		return sanitize_text_field( $value );
 	}
 }

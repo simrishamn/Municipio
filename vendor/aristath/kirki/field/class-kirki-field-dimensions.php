@@ -5,7 +5,7 @@
  * @package     Kirki
  * @subpackage  Controls
  * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license     http://opensource.org/licenses/https://opensource.org/licenses/MIT
+ * @license    https://opensource.org/licenses/MIT
  * @since       2.2.7
  */
 
@@ -52,7 +52,7 @@ class Kirki_Field_Dimensions extends Kirki_Field {
 
 		// Sanitize each sub-value separately.
 		foreach ( $value as $key => $sub_value ) {
-			$value[ $key ] = Kirki_Sanitize_Values::css_dimension( $sub_value );
+			$value[ $key ] = sanitize_text_field( $sub_value );
 		}
 		return $value;
 

@@ -8,7 +8,7 @@
  * @category    Core
  * @author      Aristeides Stathopoulos
  * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license     http://opensource.org/licenses/https://opensource.org/licenses/MIT
+ * @license    https://opensource.org/licenses/MIT
  * @since       1.0
  */
 
@@ -231,6 +231,11 @@ class Kirki extends Kirki_Init {
 		// Early exit if 'type' is not defined.
 		if ( ! isset( $args['type'] ) ) {
 			return;
+		}
+
+		// If the field is font-awesome, enqueue the icons on the frontend.
+		if ( class_exists( 'Kirki_Modules_CSS' ) && ( 'fontawesome' === $args['type'] || 'kirki-fontawesome' === $args['type'] ) ) {
+			Kirki_Modules_CSS::add_fontawesome_script();
 		}
 
 		$str       = str_replace( array( '-', '_' ), ' ', $args['type'] );

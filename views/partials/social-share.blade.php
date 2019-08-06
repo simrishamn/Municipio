@@ -1,3 +1,4 @@
+<!-- Social -->
 <ul class="share share-social share-social-icon-md share-horizontal share-no-labels hidden-print inline-block">
     <li>
         <a class="share-social-facebook" data-action="share-popup" href="https://www.facebook.com/sharer/sharer.php?u={!! urlencode(get_permalink()) !!}" data-tooltip="<?php _e('Share on', 'municipio'); ?> Facebook">
@@ -12,7 +13,7 @@
         </a>
     </li>
     <li>
-        <a class="share-social-linkedin" data-action="share-popup" href="https://www.linkedin.com/shareArticle?mini=true&amp;url={!! urlencode(get_page_link()) !!}&amp;title={{ urlencode(get_the_title()) }}" data-tooltip="<?php _e('Share on', 'municipio'); ?> LinkedIn">
+        <a class="share-social-linkedin" data-action="share-popup" href="https://www.linkedin.com/shareArticle?mini=true&amp;url={!! urldecode($socialShareUrl) !!}&amp;title={{ urlencode(get_the_title()) }}" data-tooltip="<?php _e('Share on', 'municipio'); ?> LinkedIn">
             <i class="pricon pricon-linkedin"></i>
             <span><?php _e('Share on', 'municipio'); ?> LinkedIn</span>
         </a>

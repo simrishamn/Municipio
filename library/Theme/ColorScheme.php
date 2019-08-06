@@ -8,6 +8,7 @@ class ColorScheme
 
     public function __construct()
     {
+        add_action( 'admin_enqueue_scripts', array($this, 'colorPickerDefaultPalette'), 1000);
         add_filter('acf/update_value/name=color_scheme', function ($value, $post_id, $field) {
             if (in_array($post_id, array("option", "options"))) {
                 // We shouldn't use http unless necessary
@@ -22,12 +23,33 @@ class ColorScheme
     }
 
     /**
+     * Localize theme colors to set color picker default colors
+     * @return void
+     */
+    public function colorPickerDefaultPalette() {
+
+        if (!get_field('color_scheme', 'options')) {
+            return;
+        }
+
+        if (!get_option($this->optionName) || !is_array(get_option($this->optionName)) || empty(get_option($this->optionName))) {
+            $this->getRemoteColorScheme(get_field('color_scheme', 'options'));
+        }
+
+        $colors = (array) apply_filters( 'Municipio/Theme/ColorPickerDefaultPalette', get_option($this->optionName));
+
+        wp_localize_script( 'helsingborg-se-admin', 'themeColorPalette', [
+            'colors' => $colors,
+        ]);
+    }
+
+    /**
      * Get remote colorsheme from styleguide etc
      * @param  string $manifestId. A identifier that represents the id
      * of the theme configuration (filename on server)
      * @return bool
      */
-    public function getRemoteColorScheme($manifestId = '') : bool
+    public function getRemoteColorScheme($manifestId = "") : bool
     {
         if (!defined('MUNICIPIO_STYLEGUIDE_URI')) {
             return false;
@@ -37,8 +59,10 @@ class ColorScheme
             $manifestId = apply_filters('Municipio/theme/key', get_field('color_scheme', 'option'));
         }
 
-        // Get remote data
-        $request = wp_remote_get("https:" . MUNICIPIO_STYLEGUIDE_URI . "vars/" . $manifestId . '.json');
+        $args = (defined('DEV_MODE') && DEV_MODE == true) ? ['sslverify' => false] : array();
+
+        //Get remote data
+        $request = wp_remote_get("https:" . MUNICIPIO_STYLEGUIDE_URI . "vars/" . $manifestId . '.json', $args);
 
         //Store if valid response
         if (wp_remote_retrieve_response_code($request) == 200) {
