@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "checkbox" control
+title: WordPress Customizer Checkbox Control
 slug: checkbox
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a checkbox control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: boolean
 heroButtons:
@@ -20,14 +20,14 @@ If a checkbox is not what you're after visually, you can also use a [`switch`](s
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'checkbox',
 	'settings'    => 'checkbox_setting',
-	'label'       => esc_attr__( 'Checkbox Control', 'textdomain' ),
-	'description' => esc_attr__( 'Description', 'textdomain' ),
+	'label'       => esc_html__( 'Checkbox Control', 'kirki' ),
+	'description' => esc_html__( 'Description', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => true,
-) );
+] );
 ```
 
 ### Usage

@@ -1,15 +1,15 @@
 <?php
 /**
- * Hekoers to get the values of a field.
+ * Helpers to get the values of a field.
  * WARNING: PLEASE DO NOT USE THESE.
  * we only have these for backwards-compatibility purposes.
  * please use get_option() & get_theme_mod() instead.
  *
  * @package     Kirki
  * @category    Core
- * @author      Aristeides Stathopoulos
- * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
- * @license    https://opensource.org/licenses/MIT
+ * @author      Ari Stathopoulos (@aristath)
+ * @copyright   Copyright (c) 2019, Ari Stathopoulos (@aristath)
+ * @license     https://opensource.org/licenses/MIT
  * @since       1.0
  */
 
@@ -25,7 +25,6 @@ class Kirki_Values {
 	 * @since 3.0.10
 	 */
 	public function __construct() {
-
 		add_filter( 'kirki_values_get_value', array( $this, 'typography_field_tweaks' ), 10, 2 );
 	}
 
@@ -39,7 +38,6 @@ class Kirki_Values {
 	 * @return array
 	 */
 	public function typography_field_tweaks( $value, $field_id ) {
-
 		if ( isset( Kirki::$fields[ $field_id ] ) && isset( Kirki::$fields[ $field_id ]['type'] ) ) {
 			if ( 'kirki-typography' === Kirki::$fields[ $field_id ]['type'] ) {
 
@@ -149,8 +147,6 @@ class Kirki_Values {
 				$value = get_option( $field['settings'], $field['default'] );
 			}
 		}
-
 		return $value;
-
 	}
 }

@@ -39,7 +39,7 @@ class Result {
 
 //        echo(" PATH: $path BkPath: $bkPath");
 //        spdbgd($this->ctx, 'context');
-        $thisDir = str_replace(DIRECTORY_SEPARATOR, '/', __DIR__);
+        $thisDir = str_replace(DIRECTORY_SEPARATOR, '/', (getcwd() ? getcwd() : __DIR__));
 
         if($path) {
             if(   (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && preg_match('/^[a-zA-Z]:\//', $path) === 0) //it's Windows and no drive letter X:
@@ -117,8 +117,12 @@ class Result {
                 $fn = ($fileName ? $fileName . ($i > 0 ? "_" . $i : "") : $origFileName);
                 $target = $targetPath . '/' . $fn;
 
-                if($originalPath) { $item->OriginalFile = $originalPath; }
+                if($originalPath) {
+                    $item->OriginalFile = $originalPath;
+                    if(!mb_detect_encoding($originalPath, 'UTF-8', true)) { $item->OriginalFileUTF8 = utf8_encode($originalPath); }
+                }
                 $item->SavedFile = $target;
+                if(!mb_detect_encoding($target, 'UTF-8', true)) { $item->SavedFileUTF8 = utf8_encode($target); }
 
                 //TODO: that one is a hack until the API waiting bug is fixed. Afterwards, just throw an exception
                 if(    $item->Status->Code == 2
@@ -315,7 +319,7 @@ class Result {
     private function checkSaveWebP($item, $target, $cmds)
     {
         if (isset($item->WebPLossyURL) && $item->WebPLossyURL !== 'NA') { //a WebP image was generated as per the options, download and save it too
-            $webpTarget = $targetWebPFile = dirname($target) . DIRECTORY_SEPARATOR . MB_basename($target, '.' . pathinfo($target, PATHINFO_EXTENSION)) . ".webp";
+            $webpTarget = $targetWebPFile = dirname($target) . '/' . MB_basename($target, '.' . pathinfo($target, PATHINFO_EXTENSION)) . ".webp";
             $optWebPURL = $cmds["lossy"] > 0 ? $item->WebPLossyURL : $item->WebPLosslessURL;
             ShortPixel::getClient()->download($optWebPURL, $webpTarget);
             $item->WebPSavedFile = $webpTarget;

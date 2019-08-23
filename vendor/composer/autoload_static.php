@@ -9,7 +9,6 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
-        'ff94b54cc49d91067b6c55e8792511c4' => __DIR__ . '/..' . '/aristath/kirki/kirki.php',
         '8ec4222c68e580a23520eef4abe4380f' => __DIR__ . '/..' . '/shortpixel/shortpixel-php/lib/ShortPixel.php',
         'c93afce03290e70ec0d051b69a50edb0' => __DIR__ . '/..' . '/shortpixel/shortpixel-php/lib/ShortPixel/Exception.php',
     );
@@ -18,6 +17,7 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Debug\\' => 24,
@@ -46,6 +46,7 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         'C' => 
         array (
             'Composer\\Installers\\' => 20,
+            'Carbon\\' => 7,
         ),
         'A' => 
         array (
@@ -57,6 +58,10 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Contracts\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
         ),
         'Symfony\\Component\\Translation\\' => 
         array (
@@ -122,14 +127,14 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
+        'Carbon\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
+        ),
         'AcfExportManager\\' => 
         array (
             0 => __DIR__ . '/..' . '/helsingborg-stad/acf-export-manager/src',
         ),
-    );
-
-    public static $fallbackDirsPsr4 = array (
-        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -137,7 +142,6 @@ class ComposerStaticInit4845d6e1e14302c643a104833cfb558a
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit4845d6e1e14302c643a104833cfb558a::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit4845d6e1e14302c643a104833cfb558a::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit4845d6e1e14302c643a104833cfb558a::$fallbackDirsPsr4;
 
         }, null, ClassLoader::class);
     }

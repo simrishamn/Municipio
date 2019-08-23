@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "dimension" control
+title: WordPress Customizer Dimension Control
 slug: dimension
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a dimension control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: string
 heroButtons:
@@ -18,14 +18,14 @@ The `dimension` control allows you create an input where users can enter any val
 ### Example:
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'dimension',
 	'settings'    => 'dimension_setting',
-	'label'       => esc_attr__( 'Dimension Control', 'textdomain' ),
-	'description' => esc_attr__( 'Description Here.', 'textdomain' ),
+	'label'       => esc_html__( 'Dimension Control', 'kirki' ),
+	'description' => esc_html__( 'Description Here.', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => '10px',
-) );
+] );
 ```
 
 <img src="https://raw.githubusercontent.com/aristath/kirki/master/docs/assets/images/dimension.gif" alt="dimension control example" style="max-width:300px;">

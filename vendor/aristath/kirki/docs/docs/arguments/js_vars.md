@@ -1,13 +1,14 @@
 ---
 layout: default
 title: js_vars
-published: false
+published: true
+mainMaxWidth: 55rem;
 ---
 
 <div class="callout warning">
     <h5>Use <code>output</code> and set <code>transport</code> to <code>auto</code> instead.</h5>
     <p>Using <code>js_vars</code> is almost never needed. This argument should only be used in special cases as it will be internally calculated from the <code>output</code> argument if you set <code>transport</code> to <code>auto</code>.</p>
-    <p>See the <a href="https://aristath.github.io/kirki/docs/arguments/transport.html"><code>transport</code></a> and <a href="https://aristath.github.io/kirki/docs/arguments/output.html"><code>output</code></a> arguments for more details.</p>
+    <p>See the <a href="https://kirki.org/docs/arguments/transport.html"><code>transport</code></a> and <a href="https://kirki.org/docs/arguments/output.html"><code>output</code></a> arguments for more details.</p>
 </div>
 
 
@@ -16,29 +17,27 @@ If you set `transport` to `postMessage` you can write your own scripts, or you c
 It is defined as an array of arrays so you can specify multiple elements.
 
 ```php
-<?php
-Kirki::add_field( 'my_config', array(
+Kirki::add_field( 'my_config', [
 	'type'      => 'color',
 	'settings'  => 'my_setting',
-	'label'     => __( 'Text Color', 'translation_domain' ),
+	'label'     => esc_html__( 'Text Color', 'translation_domain' ),
 	'section'   => 'my_section',
 	'default'   => 1,
 	'priority'  => 1,
 	'transport' => 'postMessage',
-	'js_vars'   => array(
-		array(
+	'js_vars'   => [
+		[
 			'element'  => 'body',
 			'function' => 'css',
 			'property' => 'color',
-		),
-		array(
+		],
+		[
 			'element'  => 'h1, h2, h3, h4',
 			'function' => 'css',
 			'property' => 'color',
-		),
-	)
-) );
-?>
+		],
+	]
+] );
 ```
 
 Available arguments you can use on each item inside each array:

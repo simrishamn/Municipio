@@ -96,6 +96,13 @@ while(!$stop) {
     }
 }
 
+//Compress from an image in memory
+$myImage = file_get_contents($pathTo_shortpixel.png);
+$ret = \ShortPixel\fromBuffer('shortpixel.png', $myImage)->wait(300)->toFiles(self::$tempDir);
+
+//Get account status and credits info:
+$ret = \ShortPixel\ShortPixel::getClient()->apiStatus(YOUR_API_KEY);
+
 ```
 There are more code examples in the [examples/integration.php](https://github.com/short-pixel-optimizer/shortpixel-php/blob/master/examples/integration.php ) file.
 

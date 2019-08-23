@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "radio-image" control
+title: WordPress Customizer Radio Image Control
 slug: radio-image
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a radio image control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: string
 heroButtons:
@@ -18,17 +18,17 @@ You can define the available options using the `choices` argument and formating 
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'radio-image',
 	'settings'    => 'my_setting',
-	'label'       => esc_html__( 'Radio Control', 'textdomain' ),
+	'label'       => esc_html__( 'Radio Control', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => 'red',
 	'priority'    => 10,
-	'choices'     => array(
+	'choices'     => [
 		'red'   => get_template_directory_uri() . '/assets/images/red.png',
 		'green' => get_template_directory_uri() . '/assets/images/green.png',
 		'blue'  => get_template_directory_uri() . '/assets/images/blue.png',
-	),
-) );
+	],
+] );
 ```

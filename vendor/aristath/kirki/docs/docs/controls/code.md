@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "code" control
+title: WordPress Customizer Code Control
 slug: code
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a code control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: string
 heroButtons:
@@ -21,17 +21,17 @@ Internally this control uses the `CodeMirror` library available in WordPress.
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'code',
 	'settings'    => 'code_setting',
-	'label'       => esc_attr__( 'Code Control', 'textdomain' ),
-	'description' => esc_attr__( 'Description', 'textdomain' ),
+	'label'       => esc_html__( 'Code Control', 'kirki' ),
+	'description' => esc_html__( 'Description', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => '',
-	'choices'     => array(
+	'choices'     => [
 		'language' => 'css',
-	),
-) );
+	],
+] );
 ```
 
 ### Usage

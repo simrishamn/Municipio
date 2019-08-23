@@ -1,7 +1,8 @@
 ---
 layout: default
 title: multiple
-published: false
+published: true
+mainMaxWidth: 55rem;
 ---
 
 
@@ -12,20 +13,19 @@ Its value is an integer and defines the number of simultaneous options the user 
 Defaults to `1`.
 
 ```php
-<?php
-Kirki::add_field( 'my_config', array(
+Kirki::add_field( 'my_config', [
 	'type'        => 'select',
 	'settings'    => 'my_setting',
-	'label'       => esc_html__( 'This is the label', 'my_textdomain' ),
+	'label'       => esc_html__( 'This is the label', 'kirki' ),
 	'section'     => 'my_section',
-	'default'     => array('option-1'),
+	'default'     => [ 'option-1' ],
 	'priority'    => 10,
 	'multiple'    => 999,
-	'choices'     => array(
-		'option-1' => esc_attr__( 'Option 1', 'my_textdomain' ),
-		'option-2' => esc_attr__( 'Option 2', 'my_textdomain' ),
-		'option-3' => esc_attr__( 'Option 3', 'my_textdomain' ),
-		'option-4' => esc_attr__( 'Option 4', 'my_textdomain' ),
-	),
-) );
+	'choices'     => [
+		'option-1' => esc_html__( 'Option 1', 'kirki' ),
+		'option-2' => esc_html__( 'Option 2', 'kirki' ),
+		'option-3' => esc_html__( 'Option 3', 'kirki' ),
+		'option-4' => esc_html__( 'Option 4', 'kirki' ),
+	],
+] );
 ```

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Open-Source Customizer Framework
+title: WordPress Customizer Framework (Open-Source)
 subtitle: A complete toolkit for WordPress theme Developers.
 heroButtons:
   - url: https://wordpress.org/plugins/kirki
@@ -30,13 +30,13 @@ script: testimonials-script.html
             </div>
             <div class="feature cell medium-6">
                 <h3>Controls</h3>
-                <p>With 30 custom controls and counting at your disposal, chances are Kirki has what you need. <a href="https://aristath.github.io/kirki/controls/">Take a look at what's available</a></p>
+                <p>With 30 custom controls and counting at your disposal, chances are Kirki has what you need. <a href="https://kirki.org/docs/controls/">Take a look at what's available</a></p>
             </div>
         </div>
         <div class="grid-x grid-margin-x features">
             <div class="feature cell medium-6">
                 <h3>Clean Code</h3>
-                <p>Kirki's codebase is 100% compliant with WordPress Coding Standards and we continiously improve the quality of our code for performance and security.</p>
+                <p>Kirki's codebase is 100% compliant with WordPress Coding Standards and we continuously improve the quality of our code for performance and security.</p>
             </div>
             <div class="feature cell medium-6">
                 <h3>More features</h3>

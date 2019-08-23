@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "custom" control
+title: WordPress Customizer Custom Control
 slug: custom
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a custom control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: null
 heroButtons:
@@ -21,14 +21,14 @@ You can enter your custom HTML in the field's `default` argument.
 
 ```php
 <?php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'custom',
 	'settings'    => 'my_setting',
-	'label'       => __( 'This is the label', 'textdomain' ),
+	'label'       => esc_html__( 'This is the label', 'kirki' ),
 	'section'     => 'section_id',
-	'default'     => '<div style="padding: 30px;background-color: #333; color: #fff; border-radius: 50px;">' . esc_html__( 'You can enter custom markup in this control and use it however you want', 'textdomain' ) . '</div>',
+	'default'     => '<div style="padding: 30px;background-color: #333; color: #fff; border-radius: 50px;">' . esc_html__( 'You can enter custom markup in this control and use it however you want', 'kirki' ) . '</div>',
 	'priority'    => 10,
-) );
+] );
 ?>
 ```
 

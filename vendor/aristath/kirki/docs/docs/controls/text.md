@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "text" control
+title: WordPress Customizer Text Control
 slug: text
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a text control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: string
 heroButtons:
@@ -18,12 +18,12 @@ heroButtons:
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'     => 'text',
 	'settings' => 'my_setting',
-	'label'    => __( 'Text Control', 'textdomain' ),
+	'label'    => esc_html__( 'Text Control', 'kirki' ),
 	'section'  => 'section_id',
-	'default'  => esc_attr__( 'This is a defualt value', 'textdomain' ),
+	'default'  => esc_html__( 'This is a default value', 'kirki' ),
 	'priority' => 10,
-) );
+] );
 ```

@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "switch" control
+title: WordPress Customizer Switch Control
 slug: switch
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a switch control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: boolean
 heroButtons:
@@ -23,10 +23,10 @@ One main difference that `switch` controls have from [`checkbox`](checkbox) and 
 By default the labels are ON/OFF. To change them you can use the `choices` argument:
 
 ```php
-'choices' => array(
-    'on'  => esc_attr__( 'Enable', 'textdomain' ),
-    'off' => esc_attr__( 'Disable', 'textdomain' )
-)
+'choices' => [
+    'on'  => esc_html__( 'Enable', 'kirki' ),
+    'off' => esc_html__( 'Disable', 'kirki' )
+]
 ```
 
 ### Example
@@ -36,18 +36,18 @@ In the example below we'll be using 'Enable' and 'Disable' as labels.
 The default labels are "On" & "Off", so if you don't want to change them you can simply omit the `choices` argument.
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'switch',
 	'settings'    => 'my_setting',
-	'label'       => __( 'This is the label', 'textdomain' ),
+	'label'       => esc_html__( 'This is the label', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => '1',
 	'priority'    => 10,
-	'choices'     => array(
-		'on'  => esc_attr__( 'Enable', 'textdomain' ),
-		'off' => esc_attr__( 'Disable', 'textdomain' ),
-	),
-) );
+	'choices'     => [
+		'on'  => esc_html__( 'Enable', 'kirki' ),
+		'off' => esc_html__( 'Disable', 'kirki' ),
+	],
+] );
 ```
 
 ### Usage

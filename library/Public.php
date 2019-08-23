@@ -63,6 +63,8 @@ if (!function_exists('municipio_get_logotype')) {
             $type = 'standard';
         }
 
+        return "";
+
         $siteName = apply_filters('Municipio/logotype_text', get_bloginfo('name'));
 
         $logotype = array(

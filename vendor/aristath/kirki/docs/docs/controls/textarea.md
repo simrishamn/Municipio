@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "textarea" control
+title: WordPress Customizer Textarea Control
 slug: textarea
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a textarea control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: string
 heroButtons:
@@ -18,12 +18,12 @@ heroButtons:
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'     => 'textarea',
 	'settings' => 'my_setting',
-	'label'    => __( 'Textarea Control', 'textdomain' ),
+	'label'    => esc_html__( 'Textarea Control', 'kirki' ),
 	'section'  => 'section_id',
-	'default'  => esc_attr__( 'This is a defualt value', 'textdomain' ),
+	'default'  => esc_html__( 'This is a default value', 'kirki' ),
 	'priority' => 10,
-) );
+] );
 ```

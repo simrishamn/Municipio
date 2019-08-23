@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "multicheck" control
+title: WordPress Customizer Multiple Checkbox Control
 slug: multicheck
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a multiple checkbox control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: array
 heroButtons:
@@ -21,21 +21,21 @@ On Multicheck fields, you can specify the options that will be available to your
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'multicheck',
 	'settings'    => 'my_setting',
-	'label'       => esc_attr__( 'My Control', 'textdomain' ),
+	'label'       => esc_html__( 'My Control', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => array('option-1', 'option-3', 'option-4'),
 	'priority'    => 10,
-	'choices'     => array(
-		'option-1' => esc_attr__( 'Option 1', 'textdomain' ),
-		'option-2' => esc_attr__( 'Option 2', 'textdomain' ),
-		'option-3' => esc_attr__( 'Option 3', 'textdomain' ),
-		'option-4' => esc_attr__( 'Option 4', 'textdomain' ),
-		'option-5' => esc_attr__( 'Option 5', 'textdomain' ),
-	),
-) );
+	'choices'     => [
+		'option-1' => esc_html__( 'Option 1', 'kirki' ),
+		'option-2' => esc_html__( 'Option 2', 'kirki' ),
+		'option-3' => esc_html__( 'Option 3', 'kirki' ),
+		'option-4' => esc_html__( 'Option 4', 'kirki' ),
+		'option-5' => esc_html__( 'Option 5', 'kirki' ),
+	],
+] );
 ```
 
 ### Usage

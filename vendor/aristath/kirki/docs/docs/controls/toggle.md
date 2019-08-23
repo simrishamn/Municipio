@@ -1,9 +1,9 @@
 ---
 layout: default
-title: The "toggle" control
+title: WordPress Customizer Toggle Control
 slug: toggle
-subtitle: Learn how to create controls using Kirki
-mainMaxWidth: 50rem;
+subtitle: Learn how to create a toggle control using the Kirki Customizer Framework.
+mainMaxWidth: 55rem;
 bodyClasses: control page
 returns: boolean
 heroButtons:
@@ -20,14 +20,14 @@ Toggle controls are internally [`checkbox`](checkbox) controls styled differentl
 ### Example
 
 ```php
-Kirki::add_field( 'theme_config_id', array(
+Kirki::add_field( 'theme_config_id', [
 	'type'        => 'toggle',
 	'settings'    => 'my_setting',
-	'label'       => esc_attr__( 'This is the label', 'textdomain' ),
+	'label'       => esc_html__( 'This is the label', 'kirki' ),
 	'section'     => 'section_id',
 	'default'     => '1',
 	'priority'    => 10,
-) );
+] );
 ```
 
 ### Usage

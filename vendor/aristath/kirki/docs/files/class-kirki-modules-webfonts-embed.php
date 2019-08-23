@@ -4,10 +4,12 @@
  *
  * @package     Kirki
  * @category    Core
- * @author      Aristeides Stathopoulos
- * @copyright   Copyright (c) 2017, Aristeides Stathopoulos
+ * @author      Ari Stathopoulos (@aristath)
+ * @copyright   Copyright (c) 2019, Ari Stathopoulos (@aristath)
  * @license    https://opensource.org/licenses/MIT
  * @since       3.0
+ *
+ * phpcs:ignoreFile Generic.Classes.DuplicateClassName
  */
 
 /**
@@ -127,11 +129,23 @@ final class Kirki_Modules_Webfonts_Embed {
 		// Sanitize the URL.
 		$url = esc_url_raw( $url );
 
+		$site_id = is_multisite() ? get_current_blog_id() . '_' : '';
+
 		// The transient name.
-		$transient_name = 'kirki_googlefonts_contents_' . md5( $url );
+		$transient_name = 'kirki_googlefonts_contents_' . $site_id . md5( $url );
 
 		// Get the transient value.
 		$data = get_transient( $transient_name );
+
+		/**
+		 * Reset the cache if we're using action=kirki-reset-cache in the URL.
+		 *
+		 * Note to code reviewers:
+		 * There's no need to check nonces or anything else, this is a simple true/false evaluation.
+		 */
+		if ( ! empty( $_GET['action'] ) && 'kirki-reset-cache' === $_GET['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$data = false;
+		}
 
 		// Check for transient, if none, grab remote HTML file.
 		if ( false === $data ) {
