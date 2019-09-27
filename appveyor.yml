@@ -24,10 +24,10 @@ before_build:
   - 'ARTIFACT="$(slugify $PROJECT $VERSION).zip"'
 
 build_script:
-  - rm -rf assets/dist
+  - rm -rf assets/dist assets/tmp
   - composer config version "$VERSION"
   - truncate -s 0 vendor/autoload.php
-  - npx --no-install gulp build
+  - npm run build
 
 after_build:
   - zip -r "$ARTIFACT" . -x ".git*" -x "node_modules/*" -x "vendor/*/*"

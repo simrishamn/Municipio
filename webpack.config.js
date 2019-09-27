@@ -16,6 +16,7 @@ const { ifProduction, ifNotProduction } = getIfUtils(process.env.NODE_ENV);
 
 module.exports = {
     mode: ifProduction('production', 'development'),
+
     /**
      * Add your entry files here
      */
@@ -38,7 +39,7 @@ module.exports = {
      * Output settings
      */
     output: {
-        filename: ifProduction('[name].[contenthash].js', '[name].js'),
+        filename: '[name].js',
         path: path.resolve(__dirname, 'assets', 'dist'),
     },
     /**
@@ -110,7 +111,7 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            name: ifProduction('[name].[contenthash:8].[ext]', '[name].[ext]'),
+                            name: '[name].[ext]',
                             outputPath: 'images',
                             publicPath: '../images',
                         },
@@ -127,7 +128,7 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            name: ifProduction('[name].[contenthash:8].[ext]', '[name].[ext]'),
+                            name: '[name].[ext]',
                             outputPath: 'fonts',
                             publicPath: '../fonts',
                         },
@@ -151,7 +152,7 @@ module.exports = {
          * Output CSS files
          */
         new MiniCssExtractPlugin({
-            filename: ifProduction('[name].[contenthash:8].css', '[name].css'),
+            filename: '[name].css',
         }),
 
         /**
@@ -188,11 +189,6 @@ module.exports = {
         }),
 
         /**
-         * Required to enable sourcemap from node_modules assets
-         */
-        new webpack.SourceMapDevToolPlugin(),
-
-        /**
          * Enable build OS notifications (when using watch command)
          */
         new WebpackNotifierPlugin({ alwaysNotify: true, skipFirstNotification: true }),
@@ -200,14 +196,12 @@ module.exports = {
         /**
          * Minimize CSS assets
          */
-        ifProduction(
-            new OptimizeCssAssetsPlugin({
-                cssProcessorPluginOptions: {
-                    preset: ['default', { discardComments: { removeAll: true } }],
-                },
-            })
-        ),
+        new OptimizeCssAssetsPlugin({
+            cssProcessorPluginOptions: {
+                preset: ['default', { discardComments: { removeAll: true } }],
+            },
+        })
     ]),
-    devtool: ifProduction('source-map', 'eval-source-map'),
+    devtool: 'source-map',
     stats: { children: false },
 };
