@@ -14,14 +14,20 @@
    Dependencies
    ========================================================================== */
 
-    var gulp        =   require('gulp'),
+    const {
+        series,
+        parallel,
+        watch: gulpWatch,
+        src,
+        dest
+    }               =   require('gulp'),
     rename          =   require('gulp-rename'),
-    sass            =   require('gulp-sass'),
+    gulpSass        =   require('gulp-sass'),
     concat          =   require('gulp-concat'),
     autoprefixer    =   require('gulp-autoprefixer'),
     sourcemaps      =   require('gulp-sourcemaps'),
     uglify          =   require('gulp-uglify'),
-    rev             =   require('gulp-rev'),
+    gulpRev         =   require('gulp-rev'),
     revDel          =   require('rev-del'),
     revReplaceCSS   =   require('gulp-rev-css-url'),
     del             =   require('del'),
@@ -29,7 +35,7 @@
     plumber         =   require('gulp-plumber'),
     jshint          =   require("gulp-jshint"),
     cleanCSS        =   require('gulp-clean-css'),
-    image           =   require('gulp-image'),
+    gulpImage       =   require('gulp-image'),
     node_modules    =   'node_modules/';
 
 /* ==========================================================================
@@ -39,154 +45,150 @@
     var config = (require('fs').existsSync('./config.json') ? JSON.parse(require('fs').readFileSync('./config.json')) : {});
 
 /* ==========================================================================
-   Default task
-   ========================================================================== */
-
-    gulp.task('default', function(callback) {
-        runSequence('build', 'watch', callback);
-    });
-
-/* ==========================================================================
    Build tasks
    ========================================================================== */
 
-    gulp.task('build', function(callback) {
-        runSequence('clean:dist', ['sass', 'scripts'], 'rev', 'image', callback);
-    });
+    const build = series(cleanDist, parallel(sass, scripts), rev, image);
+    exports.build = build;
 
-    gulp.task('build:sass', function(callback) {
-        runSequence('sass', 'rev', callback);
-    });
+    const buildSass = series(sass, rev);
 
-    gulp.task('build:scripts', function(callback) {
-        runSequence('scripts', 'rev', callback);
-    });
+    const buildScripts = series(scripts, rev);
 
 /* ==========================================================================
    Watch task
    ========================================================================== */
 
-    gulp.task('watch', function() {
-        gulp.watch('./assets/source/sass/**/*.scss', ['build:sass']);
-        gulp.watch('./assets/source/js/**/*.js', ['build:scripts']);
-    });
+    // gulp.task('watch', function() {
+    //     gulp.watch('./assets/source/sass/**/*.scss', ['build:sass']);
+    //     gulp.watch('./assets/source/js/**/*.js', ['build:scripts']);
+    // });
+    function watch() {
+        gulpWatch('./assets/source/sass/**/*.scss', [buildSass]);
+        gulpWatch('./assets/source/js/**/*.js', [buildScripts]);
+    }
 
 /* ==========================================================================
    Rev task
    ========================================================================== */
 
-    gulp.task("rev", function(){
-        return gulp.src(["./assets/tmp/**/*"])
-          .pipe(rev())
+    function rev() {
+        return src(["./assets/tmp/**/*"])
+          .pipe(gulpRev())
           .pipe(revReplaceCSS())
-          .pipe(gulp.dest('./assets/dist'))
-          .pipe(rev.manifest())
+          .pipe(dest('./assets/dist'))
+          .pipe(gulpRev.manifest())
           .pipe(revDel({dest: './assets/dist'}))
-          .pipe(gulp.dest('./assets/dist'));
-    });
+          .pipe(dest('./assets/dist'));
+    }
 
 /* ==========================================================================
    SASS Task
    ========================================================================== */
 
-    gulp.task('sass', function () {
-        var app = gulp.src('assets/source/sass/app.scss')
+    function sass() {
+        var app = src('assets/source/sass/app.scss')
                 .pipe(plumber())
                 .pipe(sourcemaps.init())
-                .pipe(sass().on('error', sass.logError))
+                .pipe(gulpSass().on('error', gulpSass.logError))
                 .pipe(autoprefixer({
                         browsers: ['last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1']
                     }))
                 .pipe(sourcemaps.write())
-                .pipe(gulp.dest('./assets/dist/css'))
+                .pipe(dest('./assets/dist/css'))
                 .pipe(cleanCSS({debug: true}))
-                .pipe(gulp.dest('./assets/tmp/css'));
+                .pipe(dest('./assets/tmp/css'));
 
-        var admin = gulp.src('assets/source/sass/admin.scss')
+        var admin = src('assets/source/sass/admin.scss')
                 .pipe(plumber())
                 .pipe(sourcemaps.init())
-                .pipe(sass().on('error', sass.logError))
+                .pipe(gulpSass().on('error', gulpSass.logError))
                 .pipe(autoprefixer({
                         browsers: ['last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1']
                     }))
                 .pipe(sourcemaps.write())
-                .pipe(gulp.dest('./assets/dist/css'))
+                .pipe(dest('./assets/dist/css'))
                 .pipe(cleanCSS({debug: true}))
-                .pipe(gulp.dest('./assets/tmp/css'));
+                .pipe(dest('./assets/tmp/css'));
 
-        return [app, admin];
-    });
+        return Promise.all([app, admin]);
+    }
 
 /* ==========================================================================
    Scripts task
    ========================================================================== */
 
-    gulp.task('scripts', function() {
-        var app = gulp.src(['assets/source/js/app.js', 'assets/source/js/*.js', 'assets/source/js/*/*.js', '!assets/source/js/admin/*.js', '!assets/source/js/admin/*/*.js'])
+    function scripts() {
+        const app = src(['assets/source/js/app.js', 'assets/source/js/*.js', 'assets/source/js/*/*.js', '!assets/source/js/admin/*.js', '!assets/source/js/admin/*/*.js'])
             .pipe(plumber())
             .pipe(sourcemaps.init())
             .pipe(jshint({multistr: true}))
             .pipe(concat('app.js'))
             .pipe(sourcemaps.write())
-            .pipe(gulp.dest('./assets/dist/js'))
+            .pipe(dest('./assets/dist/js'))
             .pipe(uglify())
-            .pipe(gulp.dest('./assets/tmp/js'));
+            .pipe(dest('./assets/tmp/js'));
 
-        var admin = gulp.src(['assets/source/js/admin/*.js', 'assets/source/js/admin/*/*.js'])
+        const admin = src(['assets/source/js/admin/*.js', 'assets/source/js/admin/*/*.js'])
             .pipe(plumber())
             .pipe(sourcemaps.init())
             .pipe(jshint({multistr: true}))
             .pipe(jshint.reporter("default"))
             .pipe(concat('admin.js'))
             .pipe(sourcemaps.write())
-            .pipe(gulp.dest('./assets/dist/js'))
+            .pipe(dest('./assets/dist/js'))
             .pipe(uglify())
-            .pipe(gulp.dest('./assets/tmp/js'));
+            .pipe(dest('./assets/tmp/js'));
 
-        var vendor = gulp.src([
+        const vendor = src([
                 'assets/source/js/vendor/*.js'
             ])
             .pipe(plumber())
             .pipe(sourcemaps.init())
             .pipe(concat('vendor.js'))
             .pipe(sourcemaps.write())
-            .pipe(gulp.dest('./assets/dist/js'))
+            .pipe(dest('./assets/dist/js'))
             .pipe(uglify())
-            .pipe(gulp.dest('./assets/tmp/js'));
+            .pipe(dest('./assets/tmp/js'));
 
-        var mce = gulp.src([
+        const mce = src([
                 'assets/source/mce-js/*.js'
             ])
             .pipe(plumber())
             .pipe(sourcemaps.init())
             .pipe(concat('mce.js'))
             .pipe(sourcemaps.write())
-            .pipe(gulp.dest('./assets/dist/js'))
+            .pipe(dest('./assets/dist/js'))
             .pipe(uglify())
-            .pipe(gulp.dest('./assets/tmp/js'));
+            .pipe(dest('./assets/tmp/js'));
 
-        return [app, vendor, admin, mce];
-
-    });
+        return Promise.all([app, vendor, admin, mce]);
+    }
 
 /* ==========================================================================
    Image optimization tasks
    ========================================================================== */
 
-    gulp.task('image', function () {
-        return gulp.src('assets/source/images/**/*',)
-            .pipe(image())
-            .pipe(gulp.dest('./assets/dist/images'));
-    });
+    function image() {
+        return src('assets/source/images/**/*',)
+            .pipe(gulpImage())
+            .pipe(dest('./assets/dist/images'));
+    }
 
 /* ==========================================================================
    Clean/Clear tasks
    ========================================================================== */
 
-    gulp.task('clean:dist', function () {
-        return del.sync('./assets/dist');
-    });
+    function cleanDist() {
+        return del('./assets/dist');
+    }
 
-    gulp.task('clean:tmp', function () {
+    function cleanTmp() {
         return del.sync('./assets/tmp');
-    });
+    }
+
+/* ==========================================================================
+   Default task
+   ========================================================================== */
+
+   exports.default = series(build, watch);
