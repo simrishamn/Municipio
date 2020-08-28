@@ -2,7 +2,7 @@
     <div class="modal-content material-shadow-lg">
         <form class="social-share-email">
             <div class="modal-header">
-                <a class="btn btn-close" href="#close"></a>
+                <a href="#" class="btn btn-close"></a>
                 <h2 class="modal-title"><?php _e('Share as e-mail', 'municipio'); ?></h2>
             </div>
             <div class="modal-body">
@@ -41,9 +41,9 @@
                 <input type="hidden" name="post_id" value="{{ the_ID() }}">
                 <input type="hidden" name="share_type" value="share">
                 <input type="submit" class="btn btn-primary" value="<?php _e('Send', 'municipio'); ?>">
-                {!! wp_nonce_field('share-page' . get_the_ID()) !!}
+                {!! wp_nonce_field('share-page' . get_the_ID(), '_wpnonce', true, false) !!}
             </div>
         </form>
     </div>
-    <a href="#close" class="backdrop"></a>
+    <a href="#" class="backdrop"></a>
 </div>

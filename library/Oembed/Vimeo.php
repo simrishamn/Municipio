@@ -16,7 +16,7 @@ class Vimeo extends Oembed
 
         return '
             <div class="player ratio-16-9" style="background-image:url(' . $this->params['thumbnail'] . ');">
-                <a href="#video-player-' . $this->params['id'] . '" data-video-id="' . $this->params['id'] . '" data-unavailable="' . __('Video playback unavailable, enable JavaScript in your browser to watch video.', 'municipio') . '"></a>
+                <a href="javascript:void(0)" data-video-id="' . $this->params['id'] . '" data-unavailable="' . __('Video playback unavailable, enable JavaScript in your browser to watch video.', 'municipio') . '"></a>
             </div>
         ';
     }

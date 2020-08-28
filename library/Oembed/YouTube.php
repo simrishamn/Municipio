@@ -54,9 +54,9 @@ class YouTube extends Oembed
         $html .= '<div class="player ratio-16-9" style="background-image:url(' . $this->params['thumbnail'] . ');">';
 
         if (!isset($this->params['list'])) {
-            $html .= '<a href="#video-player-' . $this->params['v'] . '" data-video-id="' . $this->params['v'] . '" data-unavailable="' . __('Video playback unavailable, enable JavaScript in your browser to watch video.', 'municipio') . '"></a>';
+            $html .= '<a href="javascript:void(0)" data-video-id="' . $this->params['v'] . '" data-unavailable="' . __('Video playback unavailable, enable JavaScript in your browser to watch video.', 'municipio') . '"></a>';
         } else {
-            $html .= '<a href="#video-player-' . $this->params['v'] . '" data-list-id="' . $this->params['list'] . '" data-video-id="' . $this->params['v'] . '" data-unavailable="' . __('Video playback unavailable, enable JavaScript in your browser to watch video.', 'municipio') . '"></a>';
+            $html .= '<a href="javascript:void(0)" data-list-id="' . $this->params['list'] . '" data-video-id="' . $this->params['v'] . '" data-unavailable="' . __('Video playback unavailable, enable JavaScript in your browser to watch video.', 'municipio') . '"></a>';
         }
 
         $html .= '</div>';
