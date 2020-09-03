@@ -8,6 +8,7 @@
         'name' => 'filter[' . $taxKey . ']',
         'show_option_none' => sprintf(__('Select') . ' %s…', $tax->label),
         'value_field' => 'slug',
-        'selected' => $selected
+				'selected' => $selected,
+				'orderby' => 'name'
     ));
 @endphp
