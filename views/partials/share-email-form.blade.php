@@ -1,3 +1,7 @@
+<?php
+	$uniqueId = rand(0, 1000);
+?>
+
 <div id="modal-target-{{ get_the_ID() }}" class="modal modal-backdrop-2 modal-xs text-left" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-content material-shadow-lg">
         <form class="social-share-email">
@@ -13,22 +17,22 @@
                     </div>
                     @if (!is_user_logged_in())
                         <div class="form-group">
-                            <label for="sender-name"><?php _e('Your name', 'municipio'); ?> <span class="text-danger">*</span></label>
-                            <input type="text" name="sender_name" id="sender-name" placeholder="<?php _e('Your name', 'municipio'); ?>" required>
+                            <label for="sender-name-{{$uniqueId}}"><?php _e('Your name', 'municipio'); ?> <span class="text-danger">*</span></label>
+                            <input type="text" name="sender_name" id="sender-name-{{$uniqueId}}" placeholder="<?php _e('Your name', 'municipio'); ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="sender-email"><?php _e('Your email', 'municipio'); ?> <span class="text-danger">*</span></label>
-                            <input type="email" name="sender_email" id="sender-email" placeholder="<?php _e('Your email', 'municipio'); ?>" required>
+                            <label for="sender-email-{{$uniqueId}}"><?php _e('Your email', 'municipio'); ?> <span class="text-danger">*</span></label>
+                            <input type="email" name="sender_email" id="sender-email-{{$uniqueId}}" placeholder="<?php _e('Your email', 'municipio'); ?>" required>
                         </div>
                     @endif
                     <div class="form-group">
-                        <label for="recipient-email"><?php _e('Recipient email', 'municipio'); ?> <span class="text-danger">*</span></label>
+                        <label for="recipient-email-{{$uniqueId}}"><?php _e('Recipient email', 'municipio'); ?> <span class="text-danger">*</span></label>
                         <span class="label-sm"><?php _e('Enter one or many e-mail addresses. Separate with comma.', 'municipio'); ?></span>
-                        <input type="text" name="recipient_email" id="recipient-email" placeholder="<?php _e('Recipient email', 'municipio'); ?>" required>
+                        <input type="text" name="recipient_email" id="recipient-email-{{$uniqueId}}" placeholder="<?php _e('Recipient email', 'municipio'); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="message"><?php _e('Message', 'municipio'); ?></label>
-                        <textarea name="message" id="message" rows="4" placeholder="<?php _e('Message', 'municipio'); ?>"></textarea>
+                        <label for="message-{{$uniqueId}}"><?php _e('Message', 'municipio'); ?></label>
+                        <textarea name="message" id="message-{{$uniqueId}}" rows="4" placeholder="<?php _e('Message', 'municipio'); ?>"></textarea>
                     </div>
                     @if (!is_user_logged_in())
                         <div class="form-group">
