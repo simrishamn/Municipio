@@ -22,12 +22,12 @@
             @endwhile
 
             @if (is_active_sidebar('content-area'))
-                <div class="grid grid--columns sidebar-content-area sidebar-content-area-bottom">
+                <div class="grid grid--columns sidebar-content-area sidebar-content-area-bottom"></div>
                     <?php dynamic_sidebar('content-area'); ?>
                 </div>
             @endif
 
-            <div class="hidden-xs hidden-sm hidden-print">
+            <div class="hidden-print">
                 @include('partials.page-footer')
             </div>
         </div>
@@ -47,12 +47,6 @@
                 @endif
             </aside>
         @endif
-    </div>
-
-    <div class="grid grid--columns hidden-md hidden-lg u-hidden@xl">
-        <div class="grid-md-8 offset-md-4">
-            @include('partials.page-footer')
-        </div>
     </div>
 </div>
 
