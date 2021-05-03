@@ -21,8 +21,8 @@
         src,
         dest
     }               =   require('gulp'),
-    rename          =   require('gulp-rename'),
     gulpSass        =   require('gulp-sass'),
+    nodeSass        =   require('node-sass'),
     concat          =   require('gulp-concat'),
     autoprefixer    =   require('gulp-autoprefixer'),
     sourcemaps      =   require('gulp-sourcemaps'),
@@ -31,18 +31,18 @@
     revDel          =   require('rev-del'),
     revReplaceCSS   =   require('gulp-rev-css-url'),
     del             =   require('del'),
-    runSequence     =   require('run-sequence'),
     plumber         =   require('gulp-plumber'),
     jshint          =   require("gulp-jshint"),
     cleanCSS        =   require('gulp-clean-css'),
     gulpImage       =   require('gulp-image'),
-    node_modules    =   'node_modules/';
 
 /* ==========================================================================
    Load configuration file
    ========================================================================== */
 
     var config = (require('fs').existsSync('./config.json') ? JSON.parse(require('fs').readFileSync('./config.json')) : {});
+
+    gulpSass.compiler = nodeSass;
 
 /* ==========================================================================
    Build tasks
@@ -59,10 +59,6 @@
    Watch task
    ========================================================================== */
 
-    // gulp.task('watch', function() {
-    //     gulp.watch('./assets/source/sass/**/*.scss', ['build:sass']);
-    //     gulp.watch('./assets/source/js/**/*.js', ['build:scripts']);
-    // });
     function watch() {
         gulpWatch('./assets/source/sass/**/*.scss', [buildSass]);
         gulpWatch('./assets/source/js/**/*.js', [buildScripts]);
@@ -87,7 +83,10 @@
    ========================================================================== */
 
     function sass() {
-        var app = src('assets/source/sass/app.scss')
+        const streams = [];
+
+        streams.push(new Promise(resolve => {
+            src('assets/source/sass/app.scss')
                 .pipe(plumber())
                 .pipe(sourcemaps.init())
                 .pipe(gulpSass().on('error', gulpSass.logError))
@@ -97,9 +96,12 @@
                 .pipe(sourcemaps.write())
                 .pipe(dest('./assets/dist/css'))
                 .pipe(cleanCSS({debug: true}))
-                .pipe(dest('./assets/tmp/css'));
+                .pipe(dest('./assets/tmp/css'))
+                .on('end', resolve);
+        }));
 
-        var admin = src('assets/source/sass/admin.scss')
+        streams.push(new Promise(resolve => {
+            src('assets/source/sass/admin.scss')
                 .pipe(plumber())
                 .pipe(sourcemaps.init())
                 .pipe(gulpSass().on('error', gulpSass.logError))
@@ -109,9 +111,11 @@
                 .pipe(sourcemaps.write())
                 .pipe(dest('./assets/dist/css'))
                 .pipe(cleanCSS({debug: true}))
-                .pipe(dest('./assets/tmp/css'));
+                .pipe(dest('./assets/tmp/css'))
+                .on('end', resolve);
+        }));
 
-        return Promise.all([app, admin]);
+        return Promise.all(streams);
     }
 
 /* ==========================================================================
@@ -119,50 +123,64 @@
    ========================================================================== */
 
     function scripts() {
-        const app = src(['assets/source/js/app.js', 'assets/source/js/*.js', 'assets/source/js/*/*.js', '!assets/source/js/admin/*.js', '!assets/source/js/admin/*/*.js'])
-            .pipe(plumber())
-            .pipe(sourcemaps.init())
-            .pipe(jshint({multistr: true}))
-            .pipe(concat('app.js'))
-            .pipe(sourcemaps.write())
-            .pipe(dest('./assets/dist/js'))
-            .pipe(uglify())
-            .pipe(dest('./assets/tmp/js'));
+        const streams = [];
 
-        const admin = src(['assets/source/js/admin/*.js', 'assets/source/js/admin/*/*.js'])
-            .pipe(plumber())
-            .pipe(sourcemaps.init())
-            .pipe(jshint({multistr: true}))
-            .pipe(jshint.reporter("default"))
-            .pipe(concat('admin.js'))
-            .pipe(sourcemaps.write())
-            .pipe(dest('./assets/dist/js'))
-            .pipe(uglify())
-            .pipe(dest('./assets/tmp/js'));
+        streams.push(new Promise(resolve => {
+            src(['assets/source/js/app.js', 'assets/source/js/*.js', 'assets/source/js/*/*.js', '!assets/source/js/admin/*.js', '!assets/source/js/admin/*/*.js'])
+                .pipe(plumber())
+                .pipe(sourcemaps.init())
+                .pipe(jshint({multistr: true}))
+                .pipe(concat('app.js'))
+                .pipe(sourcemaps.write())
+                .pipe(dest('./assets/dist/js'))
+                .pipe(uglify())
+                .pipe(dest('./assets/tmp/js'))
+                .on('end', resolve);
+        }));
 
-        const vendor = src([
+        streams.push(new Promise(resolve => {
+            src(['assets/source/js/admin/*.js', 'assets/source/js/admin/*/*.js'])
+                .pipe(plumber())
+                .pipe(sourcemaps.init())
+                .pipe(jshint({multistr: true}))
+                .pipe(jshint.reporter("default"))
+                .pipe(concat('admin.js'))
+                .pipe(sourcemaps.write())
+                .pipe(dest('./assets/dist/js'))
+                .pipe(uglify())
+                .pipe(dest('./assets/tmp/js'))
+                .on('end', resolve);
+        }));
+
+        streams.push(new Promise(resolve => {
+            src([
                 'assets/source/js/vendor/*.js'
             ])
-            .pipe(plumber())
-            .pipe(sourcemaps.init())
-            .pipe(concat('vendor.js'))
-            .pipe(sourcemaps.write())
-            .pipe(dest('./assets/dist/js'))
-            .pipe(uglify())
-            .pipe(dest('./assets/tmp/js'));
+                .pipe(plumber())
+                .pipe(sourcemaps.init())
+                .pipe(concat('vendor.js'))
+                .pipe(sourcemaps.write())
+                .pipe(dest('./assets/dist/js'))
+                .pipe(uglify())
+                .pipe(dest('./assets/tmp/js'))
+                .on('end', resolve);
+        }));
 
-        const mce = src([
+        streams.push(new Promise(resolve => {
+            src([
                 'assets/source/mce-js/*.js'
             ])
-            .pipe(plumber())
-            .pipe(sourcemaps.init())
-            .pipe(concat('mce.js'))
-            .pipe(sourcemaps.write())
-            .pipe(dest('./assets/dist/js'))
-            .pipe(uglify())
-            .pipe(dest('./assets/tmp/js'));
+                .pipe(plumber())
+                .pipe(sourcemaps.init())
+                .pipe(concat('mce.js'))
+                .pipe(sourcemaps.write())
+                .pipe(dest('./assets/dist/js'))
+                .pipe(uglify())
+                .pipe(dest('./assets/tmp/js'))
+                .on('end', resolve);
+        }));
 
-        return Promise.all([app, vendor, admin, mce]);
+        return Promise.all(streams);
     }
 
 /* ==========================================================================
